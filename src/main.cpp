@@ -18,6 +18,8 @@
 #include <GLFW/glfw3.h>
 #include <mujoco/mujoco.h>
 
+#include "quaid_controller.h"
+
 // MuJoCo data structures
 mjModel* m = NULL;                  // MuJoCo model
 mjData* d = NULL;                   // MuJoCo data
@@ -127,7 +129,7 @@ int main(int argc, const char** argv) {
   }
 
   // create window, make OpenGL context current, request v-sync
-  GLFWwindow* window = glfwCreateWindow(1200, 900, "Demo", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(1200, 900, "Quaid-SIM", NULL, NULL);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
@@ -146,6 +148,11 @@ int main(int argc, const char** argv) {
   glfwSetCursorPosCallback(window, mouse_move);
   glfwSetMouseButtonCallback(window, mouse_button);
   glfwSetScrollCallback(window, scroll);
+
+  QuaidController::setup_camera(cam);
+
+  QuaidController::init_controller(m, d);
+  mjcb_control = QuaidController::controller;
 
   // run main loop, target real-time simulation and 60 fps rendering
   while (!glfwWindowShouldClose(window)) {
