@@ -137,8 +137,8 @@ void ServoShield::write_to_servo(const int &servonum) {
     float mapped_position = map(positions[servonum], limits[servonum].min, limits[servonum].max,
                                 limits[servonum].control_min, limits[servonum].control_max);
     d->ctrl[mapped_servo] = mapped_position;
-    std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
-              << mapped_position << " mapped from " << positions[servonum] << std::endl;
+    // std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
+    //          << mapped_position << " mapped from " << positions[servonum] << std::endl;
   }
 }
 
