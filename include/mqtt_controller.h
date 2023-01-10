@@ -6,10 +6,12 @@
 #define QUAID_SIM_CPP_MQTT_CONTROLLER_H
 
 #include <memory>
+#include <cmath>
 #include <string>
 #include <thread>
 #include <chrono>
 #include <mqtt/async_client.h>
+#include <mqtt/client.h>
 #include <mujoco/mujoco.h>
 
 #include "servo_shield.h"
@@ -17,10 +19,16 @@
 struct MqttSettings {
   std::string mqtt_queue_no = "10";
   std::string mqtt_server_ip = "192.168.86.202";
-  int mocapStreamingDelay = 10;
+  int mocapStreamingDelay = 25;
   int streamingDelay = 25;
   int actingDelay = 25;
 };
+
+struct euler_t {
+  float yaw, pitch, roll = 0;
+};
+
+const float RAD_TO_DEG = 57.295779513082321;
 
 class MqttController {
 public:
@@ -41,10 +49,10 @@ public:
   void startStreamingObservations();
   void stopStreamingObservations();
 
+  std::shared_ptr<ServoShield> servoShield;
+
 protected:
   mjData* d;
-
-  std::shared_ptr<ServoShield> servoShield;
 
   std::shared_ptr<MqttSettings> settings;
   std::shared_ptr<mqtt::async_client> client;
@@ -71,6 +79,8 @@ protected:
 
   bool isStreamingObservations = false;
   void streamObservations();
+
+  void quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees );
 
 };
 

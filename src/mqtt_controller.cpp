@@ -15,6 +15,8 @@ void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d) {
 
   client = std::make_shared<mqtt::async_client>(this->settings->mqtt_server_ip, CLIENT_ID, PERSIST_DIR);
   servoShield = std::make_shared<ServoShield>(d);
+
+  std::cout << "MqttController on thread " << std::this_thread::get_id() << std::endl;
 }
 
 bool MqttController::readDataPacket(std::string payload) {
@@ -24,10 +26,12 @@ bool MqttController::readDataPacket(std::string payload) {
 
   switch(dir) {
     case 'a':
-      servoShield->move_servos(payload);
+//      std::thread(&ServoShield::move_servos, servoShield, payload, true).detach();
+       servoShield->move_servos(payload);
       break;
     case 'b':
-      servoShield->move_servos(payload, false);
+//      std::thread(&ServoShield::move_servos, servoShield, payload, false).detach();
+       servoShield->move_servos(payload, false);
       break;
     case 'u':
       settings->streamingDelay = atoi(payload.substr(1).c_str());
@@ -39,10 +43,12 @@ bool MqttController::readDataPacket(std::string payload) {
       servoShield->EXP_FILTER_C = atof(payload.substr(1).c_str());
       break;
     case 'r':
-      servoShield->center_servos();
+      std::thread(&ServoShield::center_servos, servoShield).detach();
+      // servoShield->center_servos();
       break;
     case 'e':
-      servoShield->stand_up();
+      std::thread(&ServoShield::stand_up, servoShield).detach();
+      // servoShield->stand_up();
       break;
     case 'x':
       startStreamingObservations();
@@ -55,6 +61,10 @@ bool MqttController::readDataPacket(std::string payload) {
       break;
     case 'n':
       stopStreamingMocapData();
+      break;
+    case 'p':
+      std::cout << "Sleeping on thread " << std::this_thread::get_id() << std::endl;
+      std::this_thread::sleep_for(std::chrono::seconds (3));
       break;
 
 //      case 'p':
@@ -86,11 +96,42 @@ void MqttController::streamObservations() {
     auto time_delta = std::chrono::duration_cast<std::chrono::milliseconds>(lastSent - now).count();
     lastSent = now;
 
-    char cmd[50] = "";
-    sprintf(cmd, "S%ld", time_delta);
-    client->publish(OBS_TOPIC, cmd);
+    char cmd[150] = "";
+    sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+            time_delta,
+            std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
+            0.0, //Bno::euler.yaw,
+            0.0, //Bno::euler.pitch,
+            0.0, //Bno::euler.roll,
+            0, // voltage
+            0, // current
+
+            servoShield->get_position(0),
+            servoShield->get_position(1),
+
+            servoShield->get_position(4),
+            servoShield->get_position(5),
+
+            servoShield->get_position(8),
+            servoShield->get_position(9),
+
+            servoShield->get_position(12),
+            servoShield->get_position(13)
+
+    );
+
+    try {
+      mqtt::message_ptr pubmsg = mqtt::make_message(OBS_TOPIC, cmd);
+      pubmsg->set_qos(QOS);
+      client->publish(OBS_TOPIC, cmd);
+    }     catch (const mqtt::exception& exc) {
+      std::cerr << "Error: " << exc.what() << " ["
+           << exc.get_reason_code() << "]" << std::endl;
+    }
+
     std::this_thread::sleep_for(std::chrono::milliseconds(settings->streamingDelay));
   }
+  std::cout << "Observations streaming stopped" << std::endl;
 }
 
 void MqttController::startStreamingMocapData() {
@@ -106,9 +147,14 @@ void MqttController::stopStreamingMocapData() {
 }
 
 void MqttController::streamMocapData() {
+  euler_t ypr{};
   while (isStreamingMocap) {
-    char cmd[50] = "";
-    sprintf(cmd, "S%f,%f,%f", d->sensordata[4], d->sensordata[5], d->sensordata[6]);
+    char cmd[150] = "";
+    quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, true);
+    sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+            d->sensordata[4], d->sensordata[5], d->sensordata[6],
+            ypr.yaw, ypr.pitch, ypr.roll
+            );
     client->publish(OBS_MOCAP_TOPIC, cmd);
     std::this_thread::sleep_for(std::chrono::milliseconds(settings->mocapStreamingDelay));
   }
@@ -143,4 +189,23 @@ void MqttController::disconnect() const {
   std::cout << "\nDisconnecting..." << std::endl;
   client->disconnect()->wait();
   std::cout << "  ...OK" << std::endl;
+}
+
+void MqttController::quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees ) {
+
+  float sqr = qr * qr;
+  float sqi = qi * qi;
+  float sqj = qj * qj;
+  float sqk = qk * qk;
+
+  ypr->yaw = atan2(2.0 * (qi * qj + qk * qr), (sqi - sqj - sqk + sqr));
+  // pitch and roll are swapped
+  ypr->roll = asin(-2.0 * (qi * qk - qj * qr) / (sqi + sqj + sqk + sqr));
+  ypr->pitch = atan2(2.0 * (qj * qk + qi * qr), (-sqi - sqj + sqk + sqr));
+
+  if (degrees) {
+    ypr->yaw *= RAD_TO_DEG;
+    ypr->pitch *= RAD_TO_DEG;
+    ypr->roll *= RAD_TO_DEG;
+  }
 }

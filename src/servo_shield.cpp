@@ -17,11 +17,12 @@ void ServoShield::center_servos() {
 }
 
 void ServoShield::stand_up() {
+  std::cout << "Stand up on thread " << std::this_thread::get_id() << std::endl;
   for (int run = 0; run < 15; ++run) {
     for (int servo = 0; servo < 15; ++servo) {
       set_position_with_filter(limits[servo].up, servo);
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
   }
 }
 
@@ -44,7 +45,11 @@ void ServoShield::set_position(int const &new_position, int const &servonum) {
 
   apply_matching_servo_limits(servonum);
 
-//  pwm.setPWM(servo_mapping[servonum], 0, positions[servonum] + offsets[servonum]);
+  write_to_servo(servonum);
+}
+
+int ServoShield::get_position(const int &servonum) {
+  return positions[servonum];
 }
 
 void ServoShield::apply_matching_servo_limits(int const &servonum) {
@@ -121,9 +126,31 @@ void ServoShield::set_position_with_filter(const int &new_position_cmd, const in
 //            servonum, servo_mapping[servonum], positions[servonum], new_position_cmd);
 //    std::cout << msg << std::endl;
   apply_matching_servo_limits(servonum);
-//  pwm.setPWM(servo_mapping[servonum], 0, positions[servonum] + offsets[servonum]);
+
+  write_to_servo(servonum);
 }
 
-float ServoShield::map(float value, float start1, float stop1, float start2, float stop2) {
-  return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+void ServoShield::write_to_servo(const int &servonum) {
+  int mapped_servo = servo_mapping[servonum];
+  if (mapped_servo < 100) {
+    //  pwm.setPWM(servo_mapping[servonum], 0, positions[servonum] + offsets[servonum]);
+    float mapped_position = map(positions[servonum], limits[servonum].min, limits[servonum].max,
+                                limits[servonum].control_min, limits[servonum].control_max);
+    d->ctrl[mapped_servo] = mapped_position;
+    std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
+              << mapped_position << " mapped from " << positions[servonum] << std::endl;
+  }
+}
+
+float ServoShield::map(float x, float in_min, float in_max, float out_min, float out_max) {
+  const float dividend = out_max - out_min;
+  const float divisor = in_max - in_min;
+  const float delta = x - in_min;
+  if(divisor == 0){
+    // log_e("Invalid map input range, min == max");
+    return -1; //AVR returns -1, SAM returns 0
+    // start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+  }
+  // return (delta * dividend + (divisor / 2)) / divisor + out_min;
+  return out_min + (out_max - out_min) * ((x - in_min) / (in_max - in_min));
 }
