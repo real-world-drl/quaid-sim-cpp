@@ -89,13 +89,14 @@ void MqttController::streamObservations() {
   auto lastSent = std::chrono::high_resolution_clock::now();
   while (isStreamingObservations) {
     auto now = std::chrono::high_resolution_clock::now();
-    auto time_delta = std::chrono::duration_cast<std::chrono::milliseconds>(lastSent - now).count();
+    auto time_delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSent).count();
     lastSent = now;
 
     char cmd[150] = "";
     sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
             time_delta,
-            std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
+            // std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
+            0L,
             0.0, //Bno::euler.yaw,
             0.0, //Bno::euler.pitch,
             0.0, //Bno::euler.roll,
@@ -148,12 +149,11 @@ void MqttController::streamMocapData() {
     char cmd[150] = "";
     quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-            d->sensordata[4] * 10, d->sensordata[5] * 10, d->sensordata[6] * 10,
+            // in Mocap Y is up so we need to map x, y to x, z (i.e. index 4, 6, 5)
+            d->sensordata[4] * 10, d->sensordata[6] * 10, d->sensordata[5] * 10,
             ypr.yaw, ypr.pitch, ypr.roll
             );
     try {
-//      mqtt::message_ptr pubmsg = mqtt::make_message(OBS_MOCAP_TOPIC, cmd);
-//      pubmsg->set_qos(QOS);
       client->publish(OBS_MOCAP_TOPIC, cmd);
     } catch (const mqtt::exception& exc) {
       std::cerr << "Error streaming mocap: " << exc.what() << " ["
