@@ -61,7 +61,7 @@ protected:
   const std::string OBS_TOPIC_BASE { "quaid/obs/r" };
   const std::string OBS_MOCAP_TOPIC_BASE { "quaid/obs/mocap" };
 
-  const std::string CLIENT_ID_BASE {"QuaidTraining"};
+  const std::string CLIENT_ID_BASE {"QuaidSimulator"};
   const std::string PERSIST_DIR			{ "./persist" };
 
   std::string ACT_TOPIC;

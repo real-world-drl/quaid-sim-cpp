@@ -20,7 +20,7 @@ void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d) {
 }
 
 bool MqttController::readDataPacket(std::string payload) {
-  std::cout << "Received message:\n" << payload << std::endl;
+  // std::cout << "Received message:\n" << payload << std::endl;
 
   char dir = payload.c_str()[0];
 
@@ -61,10 +61,6 @@ bool MqttController::readDataPacket(std::string payload) {
       break;
     case 'n':
       stopStreamingMocapData();
-      break;
-    case 'p':
-      std::cout << "Sleeping on thread " << std::this_thread::get_id() << std::endl;
-      std::this_thread::sleep_for(std::chrono::seconds (3));
       break;
 
 //      case 'p':
@@ -124,8 +120,8 @@ void MqttController::streamObservations() {
       mqtt::message_ptr pubmsg = mqtt::make_message(OBS_TOPIC, cmd);
       pubmsg->set_qos(QOS);
       client->publish(OBS_TOPIC, cmd);
-    }     catch (const mqtt::exception& exc) {
-      std::cerr << "Error: " << exc.what() << " ["
+    } catch (const mqtt::exception& exc) {
+      std::cerr << "Error streaming observations: " << exc.what() << " ["
            << exc.get_reason_code() << "]" << std::endl;
     }
 
@@ -150,12 +146,20 @@ void MqttController::streamMocapData() {
   euler_t ypr{};
   while (isStreamingMocap) {
     char cmd[150] = "";
-    quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, true);
+    quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-            d->sensordata[4], d->sensordata[5], d->sensordata[6],
+            d->sensordata[4] * 10, d->sensordata[5] * 10, d->sensordata[6] * 10,
             ypr.yaw, ypr.pitch, ypr.roll
             );
-    client->publish(OBS_MOCAP_TOPIC, cmd);
+    try {
+//      mqtt::message_ptr pubmsg = mqtt::make_message(OBS_MOCAP_TOPIC, cmd);
+//      pubmsg->set_qos(QOS);
+      client->publish(OBS_MOCAP_TOPIC, cmd);
+    } catch (const mqtt::exception& exc) {
+      std::cerr << "Error streaming mocap: " << exc.what() << " ["
+                << exc.get_reason_code() << "]" << std::endl;
+    }
+
     std::this_thread::sleep_for(std::chrono::milliseconds(settings->mocapStreamingDelay));
   }
 }
