@@ -159,7 +159,7 @@ void ServoShield::reset_marker(float theta) {
     quat_t quat{};
     eulerToQuaternion(theta, 0, 0, &quat);
 
-    d->mocap_pos[0] = d->sensordata[4] + 2;
+    d->mocap_pos[0] = d->sensordata[4];
     d->mocap_pos[1] = d->sensordata[5];
 
     d->mocap_quat[0] = quat.qr;
