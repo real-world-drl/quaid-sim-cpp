@@ -15,6 +15,13 @@
 #include <memory>
 #include <mujoco/mujoco.h>
 #include <vector>
+#include <cmath>
+
+#include "utils.h"
+
+  struct quat_t {
+    float qr, qi, qj, qk = 0;
+};
 
 struct Limit {
   Limit(int min, int max, int center, int up) : min(min), max(max), center(center), up(up){
@@ -50,6 +57,8 @@ public:
   int get_position(const int &servonum);
 
   static float map(float value, float start1, float stop1, float start2, float stop2);
+
+  void reset_marker(float theta);
 
 
 protected:
@@ -99,6 +108,16 @@ protected:
   };
 
   const int MAX_MATCHING_SERVO_DIFFERENCE = 45;
+
+
+
+void eulerToQuaternion(float yaw, float pitch, float roll, quat_t *quat) {
+    quat->qi = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
+    quat->qj = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
+    quat->qk = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
+    quat->qr = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
+}
+
 };
 
 #endif //QUAID_SIM_CPP_SERVO_SHIELD_H

@@ -154,3 +154,16 @@ float ServoShield::map(float x, float in_min, float in_max, float out_min, float
   // return (delta * dividend + (divisor / 2)) / divisor + out_min;
   return out_min + (out_max - out_min) * ((x - in_min) / (in_max - in_min));
 }
+
+void ServoShield::reset_marker(float theta) {
+    quat_t quat{};
+    eulerToQuaternion(theta, 0, 0, &quat);
+
+    d->mocap_pos[0] = d->sensordata[4] + 2;
+    d->mocap_pos[1] = d->sensordata[5];
+
+    d->mocap_quat[0] = quat.qr;
+    d->mocap_quat[1] = quat.qi;
+    d->mocap_quat[2] = quat.qj;
+    d->mocap_quat[3] = quat.qk;
+}

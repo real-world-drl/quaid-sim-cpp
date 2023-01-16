@@ -63,10 +63,11 @@ bool MqttController::readDataPacket(std::string payload) {
       stopStreamingMocapData();
       break;
 
-//      case 'p':
-//        showText = cmd.substring(1);
-//        Lcd::print_short(showText);
-//        break;
+    case 'p':
+        if (payload.substr(1, 2) == "TH") {
+            servoShield->reset_marker(atof(payload.substr(3).c_str()));
+            break;
+        }
     default: break; // keep the current course
   }
 
@@ -149,9 +150,8 @@ void MqttController::streamMocapData() {
     char cmd[150] = "";
     quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-            // in Mocap Y is up so we need to map x, y to x, z (i.e. index 4, 6, 5)
-            // it seems that (actual) y is forward so the order is y, z, x
-            d->sensordata[5] * 10, d->sensordata[6] * 10, d->sensordata[4] * 10,
+            // in Mocap Y is up, so we need to map x, y to x, z (i.e. index 4, 6, 5)
+            d->sensordata[4] * 10, d->sensordata[6] * 10, d->sensordata[5] * 10,
             ypr.yaw, ypr.pitch, ypr.roll
             );
     try {
