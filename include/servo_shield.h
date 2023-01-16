@@ -19,7 +19,7 @@
 
 #include "utils.h"
 
-  struct quat_t {
+struct quat_t {
     float qr, qi, qj, qk = 0;
 };
 
