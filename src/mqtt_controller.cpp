@@ -150,7 +150,8 @@ void MqttController::streamMocapData() {
     quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
             // in Mocap Y is up so we need to map x, y to x, z (i.e. index 4, 6, 5)
-            d->sensordata[4] * 10, d->sensordata[6] * 10, d->sensordata[5] * 10,
+            // it seems that (actual) y is forward so the order is y, z, x
+            d->sensordata[5] * 10, d->sensordata[6] * 10, d->sensordata[4] * 10,
             ypr.yaw, ypr.pitch, ypr.roll
             );
     try {

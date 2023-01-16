@@ -56,7 +56,7 @@
 <!--        <geom conaffinity="1" condim="3" material="MatPlane" name="floor" pos="0 0 -0.500" rgba="0.8 0.9 0.8 1" size="10 10 10" type="plane" friction="0.1"/>-->
 
         <body name="quaid" pos="2 0 0" euler="0 0 0">
-            <camera name="tracking_cam" mode="track" />
+            <camera name="tracking_cam" mode="trackcom" pos="0 0 -50" />
             <!--   this will make it fall down -->
             <freejoint/>
             <geom name="fuselage" type="mesh" mesh="fuselage" />
