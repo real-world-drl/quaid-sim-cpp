@@ -7,10 +7,10 @@
 MqttController QuaidController::mqtt;
 
 void QuaidController::setup_camera(mjvCamera &cam) {
-  cam.azimuth = 45;
-  cam.elevation = -20;
-  cam.distance = 5;
-  cam.lookat[2] = 0;
+//  cam.azimuth = 45;
+//  cam.elevation = -20;
+//  cam.distance = 5;
+//  cam.lookat[2] = 0;
 }
 
 void QuaidController::init_controller(const mjModel *m, mjData *d) {

@@ -22,9 +22,9 @@ void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d) {
 bool MqttController::readDataPacket(std::string payload) {
   // std::cout << "Received message:\n" << payload << std::endl;
 
-  char dir = payload.c_str()[0];
+  char cmd = payload.c_str()[0];
 
-  switch(dir) {
+  switch(cmd) {
     case 'a':
 //      std::thread(&ServoShield::move_servos, servoShield, payload, true).detach();
        servoShield->move_servos(payload);
@@ -64,10 +64,14 @@ bool MqttController::readDataPacket(std::string payload) {
       break;
 
     case 'p':
-        if (payload.substr(1, 2) == "TH") {
-            servoShield->reset_marker(atof(payload.substr(3).c_str()) / RAD_TO_DEG);
-            break;
-        }
+      if (payload.substr(1, 2) == "TH") {
+        servoShield->reset_marker(atof(payload.substr(3).c_str()) / RAD_TO_DEG);
+        break;
+      }
+
+    case 'q':
+      servoShield->move_marker(payload);
+
     default: break; // keep the current course
   }
 
@@ -148,7 +152,7 @@ void MqttController::streamMocapData() {
   euler_t ypr{};
   while (isStreamingMocap) {
     char cmd[150] = "";
-    quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
+    Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
             // in Mocap Y is up, so we need to map x, y to x, z (i.e. index 4, 6, 5)
             d->sensordata[4] * 10, d->sensordata[6] * 10, d->sensordata[5] * 10,
@@ -194,23 +198,4 @@ void MqttController::disconnect() const {
   std::cout << "\nDisconnecting..." << std::endl;
   client->disconnect()->wait();
   std::cout << "  ...OK" << std::endl;
-}
-
-void MqttController::quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees ) {
-
-  float sqr = qr * qr;
-  float sqi = qi * qi;
-  float sqj = qj * qj;
-  float sqk = qk * qk;
-
-  ypr->yaw = atan2(2.0 * (qi * qj + qk * qr), (sqi - sqj - sqk + sqr));
-  // pitch and roll are swapped
-  ypr->roll = asin(-2.0 * (qi * qk - qj * qr) / (sqi + sqj + sqk + sqr));
-  ypr->pitch = atan2(2.0 * (qj * qk + qi * qr), (-sqi - sqj + sqk + sqr));
-
-  if (degrees) {
-    ypr->yaw *= RAD_TO_DEG;
-    ypr->pitch *= RAD_TO_DEG;
-    ypr->roll *= RAD_TO_DEG;
-  }
 }

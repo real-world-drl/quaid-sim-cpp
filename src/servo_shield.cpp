@@ -3,6 +3,8 @@
 //
 #include "servo_shield.h"
 
+#include <utility>
+
 ServoShield::ServoShield(mjData *d) : d(d) {
 
 }
@@ -27,7 +29,7 @@ void ServoShield::stand_up() {
 }
 
 void ServoShield::set_action(float const &new_position_cmd, int const &servonum) {
-  int position = map(
+  int position = Utils::map(
       new_position_cmd * 1000, -1000.0, 1000.0,
       limits[servonum].min, limits[servonum].max
   );
@@ -82,26 +84,9 @@ void ServoShield::apply_matching_servo_limits(int const &servonum) {
 }
 
 void ServoShield::move_servos(std::string readline, bool use_set_action) {
-  readline[0] = ' '; // remove the command code - use later for processing commands to the simulator
+  std::vector<float> vect = Utils::parse_csv(std::move(readline));
 
-  std::vector<float> vect;
-
-  std::stringstream ss(readline);
-
-  while (ss.good()) {
-    std::string substr;
-    getline(ss, substr, ',');
-    //std::cout << "Processing: `" << substr << "`" << std::endl;
-
-    try {
-      vect.push_back(stof(substr));
-    } catch (const std::invalid_argument &ia) {
-      std::cerr << "Couldn't parse number from " << substr << " entire readline: " << readline;
-      return ;
-    }
-  }
-
-  for (int servoNum = 0; servoNum < vect.size(); ++ servoNum) {
+  for (size_t servoNum = 0; servoNum < vect.size(); ++ servoNum) {
     if (use_set_action) {
       set_action(vect[servoNum], servoNum);
     } else {
@@ -134,7 +119,7 @@ void ServoShield::write_to_servo(const int &servonum) {
   int mapped_servo = servo_mapping[servonum];
   if (mapped_servo < 100) {
     //  pwm.setPWM(servo_mapping[servonum], 0, positions[servonum] + offsets[servonum]);
-    float mapped_position = map(positions[servonum], limits[servonum].min, limits[servonum].max,
+    float mapped_position = Utils::map(positions[servonum], limits[servonum].min, limits[servonum].max,
                                 limits[servonum].control_min, limits[servonum].control_max);
     d->ctrl[mapped_servo] = mapped_position;
     // std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
@@ -142,28 +127,41 @@ void ServoShield::write_to_servo(const int &servonum) {
   }
 }
 
-float ServoShield::map(float x, float in_min, float in_max, float out_min, float out_max) {
-  const float dividend = out_max - out_min;
-  const float divisor = in_max - in_min;
-  const float delta = x - in_min;
-  if(divisor == 0){
-    // log_e("Invalid map input range, min == max");
-    return -1; //AVR returns -1, SAM returns 0
-    // start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-  }
-  // return (delta * dividend + (divisor / 2)) / divisor + out_min;
-  return out_min + (out_max - out_min) * ((x - in_min) / (in_max - in_min));
-}
+
 
 void ServoShield::reset_marker(float theta) {
     quat_t quat{};
     eulerToQuaternion(theta, 0, 0, &quat);
 
+    // frame reference marker
     d->mocap_pos[0] = d->sensordata[4];
     d->mocap_pos[1] = d->sensordata[5];
 
-    d->mocap_quat[0] = quat.qr;
-    d->mocap_quat[1] = quat.qi;
-    d->mocap_quat[2] = quat.qj;
-    d->mocap_quat[3] = quat.qk;
+    d->mocap_quat[0] = d->sensordata[0];
+    d->mocap_quat[1] = d->sensordata[1];
+    d->mocap_quat[2] = d->sensordata[2];
+    d->mocap_quat[3] = d->sensordata[3];
+
+    // heading reference marker
+    d->mocap_pos[3] = d->sensordata[4];
+    d->mocap_pos[4] = d->sensordata[5];
+
+    d->mocap_quat[4] = quat.qr;
+    d->mocap_quat[5] = quat.qi;
+    d->mocap_quat[6] = quat.qj;
+    d->mocap_quat[7] = quat.qk;
+
+}
+
+void ServoShield::move_marker(std::string readline) {
+  std::vector<float> pos_orient = Utils::parse_csv(std::move(readline));
+
+  d->mocap_pos[3] = pos_orient[0];
+  d->mocap_pos[4] = pos_orient[1];
+  d->mocap_pos[5] = pos_orient[2];
+
+  d->mocap_quat[4] = pos_orient[3];
+  d->mocap_quat[5] = pos_orient[4];
+  d->mocap_quat[6] = pos_orient[5];
+  d->mocap_quat[7] = pos_orient[6];
 }

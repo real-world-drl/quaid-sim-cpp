@@ -6,6 +6,75 @@
 #define QUAID_SIM_CPP_UTILS_H
 
 #include <cmath>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <sstream>
 
+
+#include <opencv2/core.hpp>
+#include <opencv2/core/quaternion.hpp>
+
+struct euler_t {
+    float yaw, pitch, roll = 0;
+};
+
+const float RAD_TO_DEG = 57.295779513082321;
+
+class Utils {
+public:
+    static std::vector<float> parse_csv(std::string readline) {
+      readline[0] = ' '; // remove the command code - use later for processing commands to the simulator
+
+      std::vector<float> vect;
+
+      std::stringstream ss(readline);
+
+      while (ss.good()) {
+        std::string substr;
+        getline(ss, substr, ',');
+        //std::cout << "Processing: `" << substr << "`" << std::endl;
+
+        try {
+          vect.push_back(stof(substr));
+        } catch (const std::invalid_argument &ia) {
+          std::cerr << "Couldn't parse number from " << substr << " entire readline: " << readline;
+        }
+      }
+
+      return vect;
+    }
+
+    static float map(float x, float in_min, float in_max, float out_min, float out_max) {
+      return out_min + (out_max - out_min) * ((x - in_min) / (in_max - in_min));
+    }
+
+    static
+    void quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees ) {
+      float sqr = qr * qr;
+      float sqi = qi * qi;
+      float sqj = qj * qj;
+      float sqk = qk * qk;
+
+      ypr->yaw = atan2(2.0 * (qi * qj + qk * qr), (sqi - sqj - sqk + sqr));
+      ypr->pitch = asin(-2.0 * (qi * qk - qj * qr) / (sqi + sqj + sqk + sqr));
+      ypr->roll = atan2(2.0 * (qj * qk + qi * qr), (-sqi - sqj + sqk + sqr));
+      /*
+        cv::Vec4f Q = {qr, qi, qj, qk};
+        cv::Quatd q(Q);
+        cv::Vec3f euler = q.inv().toEulerAngles(cv::QuatEnum::EulerAnglesType::EXT_YXZ);
+
+        ypr->yaw = euler[0];
+        ypr->pitch = euler[1];
+        ypr->roll = euler[2];
+      */
+      if (degrees) {
+        ypr->yaw *= RAD_TO_DEG;
+        ypr->pitch *= RAD_TO_DEG;
+        ypr->roll *= RAD_TO_DEG;
+      }
+    }
+
+};
 
 #endif //QUAID_SIM_CPP_UTILS_H

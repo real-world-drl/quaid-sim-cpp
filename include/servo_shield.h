@@ -56,9 +56,8 @@ public:
   void set_position(int const &new_position_cmd, int const &servonum);
   int get_position(const int &servonum);
 
-  static float map(float value, float start1, float stop1, float start2, float stop2);
-
   void reset_marker(float theta);
+  void move_marker(std::string payload);
 
 
 protected:

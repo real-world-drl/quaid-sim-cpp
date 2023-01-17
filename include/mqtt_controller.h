@@ -15,6 +15,7 @@
 #include <mujoco/mujoco.h>
 
 #include "servo_shield.h"
+#include "utils.h"
 
 struct MqttSettings {
   std::string mqtt_queue_no = "10";
@@ -23,12 +24,6 @@ struct MqttSettings {
   int streamingDelay = 25;
   int actingDelay = 25;
 };
-
-struct euler_t {
-  float yaw, pitch, roll = 0;
-};
-
-const float RAD_TO_DEG = 57.295779513082321;
 
 class MqttController {
 public:
@@ -79,8 +74,6 @@ protected:
 
   bool isStreamingObservations = false;
   void streamObservations();
-
-  void quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees );
 
 };
 
