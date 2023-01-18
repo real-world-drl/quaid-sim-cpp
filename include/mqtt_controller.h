@@ -27,7 +27,7 @@ struct MqttSettings {
 
 class MqttController {
 public:
-  void init(std::shared_ptr<MqttSettings> settings, mjData* d);
+  void init(std::shared_ptr<MqttSettings> settings, mjData* d, mjvCamera* cam);
 
   bool connect();
   void disconnect() const;

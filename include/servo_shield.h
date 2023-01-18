@@ -19,9 +19,6 @@
 
 #include "utils.h"
 
-struct quat_t {
-    float qr, qi, qj, qk = 0;
-};
 
 struct Limit {
   Limit(int min, int max, int center, int up) : min(min), max(max), center(center), up(up){
@@ -41,7 +38,7 @@ struct Limit {
 
 class ServoShield {
 public:
-  explicit ServoShield(mjData* d);
+  explicit ServoShield(mjData* d, mjvCamera* cam);
 
   float EXP_FILTER_C = 0.5;
 
@@ -59,12 +56,15 @@ public:
   void reset_marker(float theta);
   void move_marker(std::string payload);
 
+  void reset_camera();
+
 
 protected:
   void apply_matching_servo_limits(int const &servonum);
   void write_to_servo(const int &servonum);
 
   mjData* d;
+  mjvCamera* cam;
 
   Limit limits[16] = {
       Limit(170, 320, 300, 320),
@@ -107,15 +107,6 @@ protected:
   };
 
   const int MAX_MATCHING_SERVO_DIFFERENCE = 45;
-
-
-
-void eulerToQuaternion(float yaw, float pitch, float roll, quat_t *quat) {
-    quat->qi = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
-    quat->qj = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
-    quat->qk = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
-    quat->qr = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
-}
 
 };
 

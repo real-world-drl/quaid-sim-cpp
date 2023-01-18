@@ -19,6 +19,11 @@ struct euler_t {
     float yaw, pitch, roll = 0;
 };
 
+
+struct quat_t {
+    float qr, qi, qj, qk = 0;
+};
+
 const float RAD_TO_DEG = 57.295779513082321;
 
 class Utils {
@@ -46,6 +51,13 @@ public:
     }
 
     static float map(float x, float in_min, float in_max, float out_min, float out_max) {
+      const float divisor = in_max - in_min;
+      if(divisor == 0){
+        // log_e("Invalid map input range, min == max");
+        std::cout << "Invalid map input range, min == max " << in_max << " == " << in_min << std::endl;
+        return in_min; //AVR returns -1, SAM returns 0
+        // start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+      }
       return out_min + (out_max - out_min) * ((x - in_min) / (in_max - in_min));
     }
 
@@ -75,6 +87,12 @@ public:
       }
     }
 
+    static void eulerToQuaternion(float yaw, float pitch, float roll, quat_t *quat) {
+      quat->qi = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
+      quat->qj = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
+      quat->qk = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
+      quat->qr = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
+    }
 };
 
 #endif //QUAID_SIM_CPP_UTILS_H

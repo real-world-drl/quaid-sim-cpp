@@ -4,7 +4,7 @@
 
 #include "mqtt_controller.h"
 
-void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d) {
+void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d, mjvCamera* cam) {
   this->settings = settings;
   this->d = d;
 
@@ -14,7 +14,7 @@ void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d) {
   ACT_TOPIC = (ACT_TOPIC_BASE + this->settings->mqtt_queue_no);
 
   client = std::make_shared<mqtt::async_client>(this->settings->mqtt_server_ip, CLIENT_ID, PERSIST_DIR);
-  servoShield = std::make_shared<ServoShield>(d);
+  servoShield = std::make_shared<ServoShield>(d, cam);
 
   std::cout << "MqttController on thread " << std::this_thread::get_id() << std::endl;
 }
@@ -66,11 +66,15 @@ bool MqttController::readDataPacket(std::string payload) {
     case 'p':
       if (payload.substr(1, 2) == "TH") {
         servoShield->reset_marker(atof(payload.substr(3).c_str()) / RAD_TO_DEG);
-        break;
       }
+      break;
 
     case 'q':
       servoShield->move_marker(payload);
+      break;
+    case 'w':
+      servoShield->reset_camera();
+      break;
 
     default: break; // keep the current course
   }
@@ -154,8 +158,7 @@ void MqttController::streamMocapData() {
     char cmd[150] = "";
     Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-            // in Mocap Y is up, so we need to map x, y to x, z (i.e. index 4, 6, 5)
-            d->sensordata[4] * 10, d->sensordata[6] * 10, d->sensordata[5] * 10,
+            d->sensordata[4] * 10, d->sensordata[5] * 10, d->sensordata[6] * 10,
             ypr.yaw, ypr.pitch, ypr.roll
             );
     try {

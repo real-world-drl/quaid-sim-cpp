@@ -12,7 +12,7 @@
 namespace QuaidController {
   void setup_camera(mjvCamera &cam);
 
-  void init_controller(const mjModel* m, mjData* d);
+  void init_controller(const mjModel* m, mjData* d, mjvCamera *cam);
 
   void controller(const mjModel *m, mjData *d);
 

@@ -151,7 +151,7 @@ int main(int argc, const char** argv) {
 
   QuaidController::setup_camera(cam);
 
-  QuaidController::init_controller(m, d);
+  QuaidController::init_controller(m, d, &cam);
   mjcb_control = QuaidController::controller;
 
   // run main loop, target real-time simulation and 60 fps rendering

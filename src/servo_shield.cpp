@@ -5,7 +5,7 @@
 
 #include <utility>
 
-ServoShield::ServoShield(mjData *d) : d(d) {
+ServoShield::ServoShield(mjData *d,mjvCamera *cam) : d(d), cam(cam) {
 
 }
 
@@ -92,6 +92,9 @@ void ServoShield::move_servos(std::string readline, bool use_set_action) {
     } else {
       set_position(vect[servoNum], servoNum);
     }
+    if (servoNum == 15) {
+      break;
+    }
   }
 }
 
@@ -131,7 +134,7 @@ void ServoShield::write_to_servo(const int &servonum) {
 
 void ServoShield::reset_marker(float theta) {
     quat_t quat{};
-    eulerToQuaternion(theta, 0, 0, &quat);
+    Utils::eulerToQuaternion(theta, 0, 0, &quat);
 
     // frame reference marker
     d->mocap_pos[0] = d->sensordata[4];
@@ -164,4 +167,11 @@ void ServoShield::move_marker(std::string readline) {
   d->mocap_quat[5] = pos_orient[4];
   d->mocap_quat[6] = pos_orient[5];
   d->mocap_quat[7] = pos_orient[6];
+}
+
+void ServoShield::reset_camera() {
+  cam->distance = 5;
+  cam->azimuth = 45;
+  cam->elevation = -20;
+  cam->lookat[2] = 0;
 }
