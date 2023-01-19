@@ -66,6 +66,7 @@ bool MqttController::readDataPacket(std::string payload) {
     case 'p':
       if (payload.substr(1, 2) == "TH") {
         servoShield->reset_marker(atof(payload.substr(3).c_str()) / RAD_TO_DEG);
+        servoShield->reset_camera();
       }
       break;
 

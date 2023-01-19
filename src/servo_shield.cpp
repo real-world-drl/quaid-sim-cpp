@@ -173,5 +173,7 @@ void ServoShield::reset_camera() {
   cam->distance = 5;
   cam->azimuth = 45;
   cam->elevation = -20;
-  cam->lookat[2] = 0;
+  cam->lookat[0] = d->sensordata[4];
+  cam->lookat[1] = d->sensordata[5];
+  cam->lookat[2] = d->sensordata[6];
 }
