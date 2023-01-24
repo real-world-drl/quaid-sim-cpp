@@ -4,6 +4,10 @@
 
 #include "mqtt_controller.h"
 
+MqttController::~MqttController() {
+  disconnect();
+}
+
 void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d, mjvCamera* cam) {
   this->settings = settings;
   this->d = d;

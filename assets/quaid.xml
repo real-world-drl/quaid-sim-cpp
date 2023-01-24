@@ -1,6 +1,9 @@
 <mujoco model="quaid">
     <compiler inertiafromgeom="true" angle="degree" coordinate="local"/>
-    <option timestep="0.005" gravity="0 0 -9.81" iterations="20" integrator="RK4" />
+    <option timestep="0.005" gravity="0 0 -9.81" iterations="20" integrator="RK4" >
+        <flag sensornoise="enable" />
+    </option>
+
 
     <asset>
         <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
@@ -300,8 +303,8 @@
     </actuator>
 
     <sensor>
-        <framequat name="orientation" objtype="site" objname="imu"/>
-        <framepos name="position" objtype="site" objname="imu"/>
+        <framequat name="orientation" objtype="site" objname="imu" noise="0.0"/>
+        <framepos name="position" objtype="site" objname="imu" noise="0.0"/>
         <gyro name="gyro" site="imu" /> <!--  noise="5e-4" cutoff="34.9" -->
         <accelerometer name="acceleration" site="imu" /> <!-- noise="1e-2" cutoff="157" -->
         <magnetometer name="magnetometer" site="imu"/>
