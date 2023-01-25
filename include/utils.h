@@ -12,9 +12,6 @@
 #include <sstream>
 
 
-#include <opencv2/core.hpp>
-#include <opencv2/core/quaternion.hpp>
-
 struct euler_t {
     float yaw, pitch, roll = 0;
 };
