@@ -138,7 +138,7 @@ int main(int argc, const char** argv) {
   }
 
   // create window, make OpenGL context current, request v-sync
-  GLFWwindow* window = glfwCreateWindow(1200, 900, "Quaid-SIM", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(1200, 900, ("Quaid-SIM R" + mqtt_queue_no).c_str(), NULL, NULL);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
