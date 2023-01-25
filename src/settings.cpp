@@ -1,7 +1,7 @@
 //
 // Created by bohm on 25/01/23.
 //
-
+#include <fstream>
 #include "settings.h"
 
 MqttSettings::MqttSettings(const std::string &path) {
@@ -9,6 +9,11 @@ MqttSettings::MqttSettings(const std::string &path) {
 }
 
 void MqttSettings::parse(const std::string &path) {
+  std::ifstream f(path.c_str());
+  if (!f.good()) {
+    throw std::runtime_error("Config file " + path + " does not exist!");
+  }
+
   YAML::Node config = YAML::LoadFile(path);
 
   if (config["mqtt"]["mqtt_queue_no"]) {

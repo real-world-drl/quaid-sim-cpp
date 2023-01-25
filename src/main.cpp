@@ -20,6 +20,8 @@
 
 #include "quaid_controller.h"
 
+#include "CLI11.hpp"
+
 // MuJoCo data structures
 mjModel* m = NULL;                  // MuJoCo model
 mjData* d = NULL;                   // MuJoCo data
@@ -103,22 +105,27 @@ void scroll(GLFWwindow* window, double xoffset, double yoffset) {
 
 // main function
 int main(int argc, const char** argv) {
-  // check command-line arguments
-  if (argc!=2) {
-    std::printf(" USAGE:  basic modelfile\n");
-    return 0;
-  }
+  std::string model_file = "../assets/quaid.xml";
+  std::string config_file = "../config/settings.yaml";
+
+  CLI::App app{"Quaid-SIM"};
+  app.add_option("-m,--model", model_file, "MuJoCo model file path (defaults to ../assets/quaid.xml)");
+  app.add_option("-c,--config", config_file, "Config file path (defaults to ../config/settings.yaml)");
+
+  CLI11_PARSE(app, argc, argv);
 
   // load and compile model
   char error[1000] = "Could not load binary model";
-  if (std::strlen(argv[1])>4 && !std::strcmp(argv[1]+std::strlen(argv[1])-4, ".mjb")) {
-    m = mj_loadModel(argv[1], 0);
+  if (model_file.find(".mjb") != std::string::npos) {
+    m = mj_loadModel(model_file.c_str(), 0);
   } else {
-    m = mj_loadXML(argv[1], 0, error, 1000);
+    m = mj_loadXML(model_file.c_str(), 0, error, 1000);
   }
   if (!m) {
     mju_error_s("Load model error: %s", error);
   }
+
+  QuaidController::init_controller(m, d, &cam, config_file);
 
   // make data
   d = mj_makeData(m);
@@ -151,7 +158,6 @@ int main(int argc, const char** argv) {
 
   QuaidController::setup_camera(cam);
 
-  QuaidController::init_controller(m, d, &cam);
   mjcb_control = QuaidController::controller;
 
   // run main loop, target real-time simulation and 60 fps rendering

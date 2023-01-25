@@ -6,13 +6,14 @@
 #define QUAID_SIM_CPP_QUAID_CONTROLLER_H
 
 #include <memory>
+#include <string>
 #include <mujoco/mujoco.h>
 #include "mqtt_controller.h"
 
 namespace QuaidController {
   void setup_camera(mjvCamera &cam);
 
-  void init_controller(const mjModel* m, mjData* d, mjvCamera *cam);
+  void init_controller(const mjModel* m, mjData* d, mjvCamera *cam, std::string config_path);
 
   void controller(const mjModel *m, mjData *d);
 
