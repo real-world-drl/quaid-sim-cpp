@@ -107,10 +107,12 @@ void scroll(GLFWwindow* window, double xoffset, double yoffset) {
 int main(int argc, const char** argv) {
   std::string model_file = "../assets/quaid.xml";
   std::string config_file = "../config/settings.yaml";
+  std::string mqtt_queue_no = "-1";
 
   CLI::App app{"Quaid-SIM"};
   app.add_option("-m,--model", model_file, "MuJoCo model file path (defaults to ../assets/quaid.xml)");
   app.add_option("-c,--config", config_file, "Config file path (defaults to ../config/settings.yaml)");
+  app.add_option("-q,--mqtt_queue_no", mqtt_queue_no, "MQTT queue no (defaults to the one in config file)");
 
   CLI11_PARSE(app, argc, argv);
 
@@ -125,7 +127,7 @@ int main(int argc, const char** argv) {
     mju_error_s("Load model error: %s", error);
   }
 
-  QuaidController::init_controller(m, d, &cam, config_file);
+  QuaidController::init_controller(m, d, &cam, config_file, mqtt_queue_no);
 
   // make data
   d = mj_makeData(m);

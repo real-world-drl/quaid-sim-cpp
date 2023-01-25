@@ -13,7 +13,7 @@
 namespace QuaidController {
   void setup_camera(mjvCamera &cam);
 
-  void init_controller(const mjModel* m, mjData* d, mjvCamera *cam, std::string config_path);
+  void init_controller(const mjModel* m, mjData* d, mjvCamera *cam, const std::string& config_path, const std::string& mqtt_queue_no);
 
   void controller(const mjModel *m, mjData *d);
 
