@@ -14,7 +14,7 @@ void QuaidController::setup_camera(mjvCamera &cam) {
 }
 
 void QuaidController::init_controller(const mjModel *m, mjData *d, mjvCamera *cam) {
-  std::shared_ptr<MqttSettings> settings = std::make_shared<MqttSettings>();
+  std::shared_ptr<MqttSettings> settings = std::make_shared<MqttSettings>("../config/settings.yaml");
 
   mqtt.init(settings, d, cam);
   mqtt.connect();

@@ -1,0 +1,6 @@
+mqtt:
+  mqtt_queue_no: 12
+  mqtt_server_ip: 192.168.86.202
+
+sim:
+  mocap_streaming_delay: 25

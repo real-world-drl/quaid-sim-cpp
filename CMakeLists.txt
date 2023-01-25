@@ -13,5 +13,5 @@ find_package(yaml-cpp REQUIRED)
 
 find_package(glfw3 REQUIRED)
 
-add_executable(quaid_sim_cpp src/main.cpp include/quaid_controller.h src/quaid_controller.cpp include/mqtt_controller.h src/mqtt_controller.cpp include/servo_shield.h src/servo_shield.cpp include/utils.h src/utils.cpp)
+add_executable(quaid_sim_cpp src/main.cpp include/quaid_controller.h src/quaid_controller.cpp include/mqtt_controller.h src/mqtt_controller.cpp include/servo_shield.h src/servo_shield.cpp include/utils.h src/utils.cpp include/settings.h src/settings.cpp)
 target_link_libraries(quaid_sim_cpp libmujoco.so libglfw.so  libpaho-mqttpp3.so libpaho-mqtt3as.so  yaml-cpp)

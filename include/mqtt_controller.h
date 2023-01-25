@@ -17,13 +17,7 @@
 #include "servo_shield.h"
 #include "utils.h"
 
-struct MqttSettings {
-  std::string mqtt_queue_no = "10";
-  std::string mqtt_server_ip = "192.168.86.202";
-  int mocapStreamingDelay = 25;
-  int streamingDelay = 25;
-  int actingDelay = 25;
-};
+#include "settings.h"
 
 class MqttController {
 public:
