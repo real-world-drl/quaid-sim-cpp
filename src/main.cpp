@@ -127,10 +127,10 @@ int main(int argc, const char** argv) {
     mju_error_s("Load model error: %s", error);
   }
 
-  QuaidController::init_controller(m, d, &cam, config_file, mqtt_queue_no);
-
   // make data
   d = mj_makeData(m);
+
+  QuaidController::init_controller(m, d, &cam, config_file, mqtt_queue_no);
 
   // init GLFW
   if (!glfwInit()) {
