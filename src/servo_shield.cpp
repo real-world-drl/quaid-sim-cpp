@@ -5,7 +5,7 @@
 
 #include <utility>
 
-ServoShield::ServoShield(mjData *d,mjvCamera *cam) : d(d), cam(cam) {
+ServoShield::ServoShield(mjModel* m, mjData *d,mjvCamera *cam) : d(d), m(m), cam(cam) {
 
 }
 
@@ -176,4 +176,12 @@ void ServoShield::reset_camera() {
   cam->lookat[0] = d->sensordata[4];
   cam->lookat[1] = d->sensordata[5];
   cam->lookat[2] = d->sensordata[6];
+}
+
+void ServoShield::set_sensor_noise(std::string payload) {
+  std::vector<float> vect = Utils::parse_csv(std::move(payload));
+
+  for (int i = 0; i < vect.size() && i < m->nsensor; ++i) {
+    m->sensor_noise[i] = vect[i];
+  }
 }

@@ -21,7 +21,7 @@
 
 class MqttController {
 public:
-  void init(std::shared_ptr<MqttSettings> settings, mjData* d, mjvCamera* cam);
+  void init(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam);
   ~MqttController();
 
   bool connect();
@@ -42,6 +42,7 @@ public:
   std::shared_ptr<ServoShield> servoShield;
 
 protected:
+  mjModel* m;
   mjData* d;
 
   std::shared_ptr<MqttSettings> settings;

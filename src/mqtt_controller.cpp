@@ -8,7 +8,7 @@ MqttController::~MqttController() {
   disconnect();
 }
 
-void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d, mjvCamera* cam) {
+void MqttController::init(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam) {
   this->settings = settings;
   this->d = d;
 
@@ -18,7 +18,7 @@ void MqttController::init(std::shared_ptr<MqttSettings> settings, mjData* d, mjv
   ACT_TOPIC = (ACT_TOPIC_BASE + this->settings->mqtt_queue_no);
 
   client = std::make_shared<mqtt::async_client>(this->settings->mqtt_server_ip, CLIENT_ID, PERSIST_DIR);
-  servoShield = std::make_shared<ServoShield>(d, cam);
+  servoShield = std::make_shared<ServoShield>(m, d, cam);
 
   std::cout << "MqttController on thread " << std::this_thread::get_id() << std::endl;
 }
@@ -64,7 +64,7 @@ bool MqttController::readDataPacket(std::string payload) {
       startStreamingMocapData();
       break;
     case 'n':
-      stopStreamingMocapData();
+      servoShield->set_sensor_noise(payload.substr(1));
       break;
 
     case 'p':

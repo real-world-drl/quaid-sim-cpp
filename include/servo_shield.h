@@ -38,7 +38,7 @@ struct Limit {
 
 class ServoShield {
 public:
-  explicit ServoShield(mjData* d, mjvCamera* cam);
+  explicit ServoShield(mjModel* m, mjData* d, mjvCamera* cam);
 
   float EXP_FILTER_C = 0.5;
 
@@ -56,6 +56,8 @@ public:
   void reset_marker(float theta);
   void move_marker(std::string payload);
 
+  void set_sensor_noise(std::string payload);
+
   void reset_camera();
 
 
@@ -64,6 +66,7 @@ protected:
   void write_to_servo(const int &servonum);
 
   mjData* d;
+  mjModel* m;
   mjvCamera* cam;
 
   Limit limits[16] = {
