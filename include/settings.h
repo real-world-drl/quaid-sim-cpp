@@ -19,6 +19,8 @@ public:
     int streamingDelay = 25;
     int actingDelay = 25;
 
+    float position_noise, rotation_noise = 0.0;
+
 protected:
     void parse(const std::string &path);
 };

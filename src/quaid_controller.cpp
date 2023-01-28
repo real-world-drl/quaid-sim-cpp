@@ -22,6 +22,9 @@ void QuaidController::init_controller(const mjModel *m, mjData *d, mjvCamera *ca
 
   mqtt.init(settings, d, cam);
   mqtt.connect();
+
+  m->sensor_noise[0] = settings->rotation_noise;
+  m->sensor_noise[1] = settings->position_noise;
 }
 
 void QuaidController::controller(const mjModel *m, mjData *d) {

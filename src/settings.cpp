@@ -27,4 +27,11 @@ void MqttSettings::parse(const std::string &path) {
   if (config["sim"]["mocap_streaming_delay"]) {
     mocapStreamingDelay = config["sim"]["mocap_streaming_delay"].as<int>();
   }
+
+  if (config["sensors"]["position_noise"]) {
+    position_noise = config["sensors"]["position_noise"].as<float>();
+  }
+  if (config["sensors"]["rotation_noise"]) {
+    rotation_noise = config["sensors"]["rotation_noise"].as<float>();
+  }
 }

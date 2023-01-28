@@ -4,3 +4,7 @@ mqtt:
 
 sim:
   mocap_streaming_delay: 25
+
+sensors:
+  position_noise: 0.1
+  rotation_noise: 0.1
