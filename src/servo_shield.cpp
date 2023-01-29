@@ -179,6 +179,7 @@ void ServoShield::reset_camera() {
 }
 
 void ServoShield::set_sensor_noise(std::string payload) {
+  std::cout << "Setting sensor noise to " << payload << std::endl;
   std::vector<float> vect = Utils::parse_csv(std::move(payload));
 
   for (int i = 0; i < vect.size() && i < m->nsensor; ++i) {
