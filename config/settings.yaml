@@ -1,10 +1,10 @@
 mqtt:
-  mqtt_queue_no: 12
-  mqtt_server_ip: uq2
+  mqtt_queue_no: 100
+  mqtt_server_ip: ml2
 
 sim:
   mocap_streaming_delay: 25
 
 sensors:
-  position_noise: 0.0
-  rotation_noise: 0.0
+  position_noise: 0.05
+  rotation_noise: 0.05

@@ -6,8 +6,8 @@ SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -g")
 set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include/)
-include_directories(/home/bohm/.mujoco/mujoco-2.3.1/include/)
-link_directories(/home/bohm/.mujoco/mujoco-2.3.1/lib/)
+include_directories(~/.mujoco/mujoco-2.3.1/include/)
+link_directories(~/.mujoco/mujoco-2.3.1/lib/)
 
 find_package(yaml-cpp REQUIRED)
 
