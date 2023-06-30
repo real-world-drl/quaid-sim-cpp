@@ -24,6 +24,9 @@ void MqttSettings::parse(const std::string &path) {
     mqtt_server_ip = config["mqtt"]["mqtt_server_ip"].as<std::string>();
   }
 
+  if (config["sim"]["obs_streaming_delay"]) {
+    streamingDelay = config["sim"]["obs_streaming_delay"].as<int>();
+  }
   if (config["sim"]["mocap_streaming_delay"]) {
     mocapStreamingDelay = config["sim"]["mocap_streaming_delay"].as<int>();
   }
