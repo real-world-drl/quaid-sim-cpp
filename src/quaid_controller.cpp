@@ -30,3 +30,10 @@ void QuaidController::init_controller(mjModel *m, mjData *d, mjvCamera *cam, con
 void QuaidController::controller(const mjModel *m, mjData *d) {
 
 }
+
+void QuaidController::disconnect() {
+    mqtt.stopStreamingObservations();
+    mqtt.stopStreamingMocapData();
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    mqtt.disconnect();
+}

@@ -182,7 +182,7 @@ void ServoShield::set_sensor_noise(std::string payload) {
   std::cout << "Setting sensor noise to " << payload << std::endl;
   std::vector<float> vect = Utils::parse_csv(std::move(payload));
 
-  for (int i = 0; i < vect.size() && i < m->nsensor; ++i) {
+  for (uint i = 0; i < vect.size() && i < (uint) m->nsensor; ++i) {
     m->sensor_noise[i] = vect[i];
   }
 }

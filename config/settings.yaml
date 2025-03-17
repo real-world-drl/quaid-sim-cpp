@@ -1,6 +1,6 @@
 mqtt:
-  mqtt_queue_no: 100
-  mqtt_server_ip: ml2
+  mqtt_queue_no: 01
+  mqtt_server_ip: ml4u
 
 sim:
   obs_streaming_delay: 25

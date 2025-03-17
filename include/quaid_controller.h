@@ -19,6 +19,8 @@ namespace QuaidController {
 
   extern MqttController mqtt;
 
+  void disconnect();
+
 }
 
 #endif //QUAID_SIM_CPP_QUAID_CONTROLLER_H

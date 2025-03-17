@@ -70,6 +70,7 @@ protected:
   mjvCamera* cam;
 
   Limit limits[16] = {
+          /*
       Limit(170, 320, 300, 320),
       Limit(170, 300, 300, 170, 0, 1),
       Limit(0, 0, 0, 0), // unused
@@ -86,6 +87,42 @@ protected:
       Limit(170, 300, 300, 170, 0, 1),
       Limit(0, 0, 0, 0), // unused
       Limit(100, 500, 300, 300) // distance sensor left-right
+      */
+      Limit(150, 320, 300, 320),
+      Limit(150, 320, 300, 170, 0, 1),
+      Limit(0, 0, 0, 0), // unused
+      Limit(0, 0, 0, 0), // unused
+      Limit(280, 390, 300, 322),
+      Limit(280, 390, 300, 390, -1, 0),
+      Limit(0, 0, 0, 0), // unused
+      Limit(0, 0, 0, 0), // unused
+      Limit(280, 390, 300, 322),
+      Limit(280, 390, 300, 390, -1, 0),
+      Limit(0, 0, 0, 0), // unused
+      Limit(100, 500, 300, 300), // distance sensor up-down
+      Limit(150, 320, 300, 320),
+      Limit(150, 320, 300, 170, 0, 1),
+      Limit(0, 0, 0, 0), // unused
+      Limit(100, 500, 300, 300) // distance sensor left-right
+      /*  */
+          /* Quaid Small Real
+          Limit(220, 300, 300, 280),
+          Limit(250, 300, 300, 250),
+          Limit(0, 0, 0, 0), // unused
+          Limit(0, 0, 0, 0), // unused
+          Limit(300, 380, 300, 320),
+          Limit(300, 350, 300, 350),
+          Limit(0, 0, 0, 0), // unused
+          Limit(0, 0, 0, 0), // unused
+          Limit(300, 400, 300, 320),
+          Limit(300, 380, 300, 380),
+          Limit(0, 0, 0, 0), // unused
+          Limit(100, 500, 300, 0), // distance sensor up-down
+          Limit(200, 300, 300, 280),
+          Limit(220 , 300, 300, 220),
+          Limit(0, 0, 0, 0), // unused
+          Limit(100, 500, 300, 300) // distance sensor left-right
+           */
   };
 
   int positions[16] = {

@@ -196,6 +196,8 @@ int main(int argc, const char** argv) {
   mj_deleteData(d);
   mj_deleteModel(m);
 
+  QuaidController::disconnect();
+
   // terminate GLFW (crashes with Linux NVidia drivers)
 #if defined(__APPLE__) || defined(_WIN32)
   glfwTerminate();

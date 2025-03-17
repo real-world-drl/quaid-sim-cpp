@@ -5,7 +5,7 @@
 #include "mqtt_controller.h"
 
 MqttController::~MqttController() {
-  disconnect();
+//  disconnect();
 }
 
 void MqttController::init(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam) {
@@ -96,6 +96,7 @@ void MqttController::startStreamingObservations() {
 }
 
 void MqttController::stopStreamingObservations() {
+    std::cout << "Stopping observations streaming..." << std::endl;
   isStreamingObservations = false;
 }
 
@@ -154,6 +155,7 @@ void MqttController::startStreamingMocapData() {
 }
 
 void MqttController::stopStreamingMocapData() {
+    std::cout << "Stopping mocap data..." << std::endl;
   isStreamingMocap = false;
 }
 
@@ -175,6 +177,7 @@ void MqttController::streamMocapData() {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(settings->mocapStreamingDelay));
   }
+  std::cout << "Streaming mocap data stopped" << std::endl;
 }
 
 
