@@ -72,7 +72,7 @@
                     <geom name="servos_mount_fl" type="mesh" mesh="left_servo_mount"  />
                     <geom name="servo1_fl" type="mesh" mesh="left_thigh_servo" rgba="0 0 0 1"/>
                     <body name="thigh1_fl" pos="0 0 0">
-                        <joint name="thigh_joint1_fl" type="hinge" pos="0.24 -0.15 0.515" axis="1 0 0" range="0 45.0" damping="10" limited="true" />
+                        <joint name="thigh_joint1_fl" type="hinge" pos="0.2 -0.15 0.515" axis="1 0 0" range="0 45.0" damping="10" limited="true" />
                         <geom name="thigh_horn_fl1" type="mesh" mesh="left_thigh_horn" rgba="0.137 0.408 0.8 1" />
                         <body name="thigh_link_b1_fl">
                             <joint name="thigh_link_joint1_fl" type="hinge" pos="0.2 -0.16 0.685" axis="1 0 0" damping="0.05" limited="false" />
@@ -90,10 +90,10 @@
                         <joint name="knee1_joint_fl" type="hinge" pos="0.2 0.015 0.515" axis="1 0 0" range="-25 25.0" damping="10" limited="true" />
                         <geom name="knee_horn1_fl" type="mesh" mesh="left_knee_horn" />
                         <body name="knee_link_b1_fl">
-                            <joint name="knee1_link_joint_fl" type="hinge" pos="0.25 0.16 0.60" axis="1 0 0" damping="0.05" limited="false" />
+                            <joint name="knee1_link_joint_fl" type="hinge" pos="0.27 0.16 0.60" axis="1 0 0" damping="0.05" limited="false" />
                             <geom name="knee_link1_fl" type="mesh" mesh="left_knee_link" />
                             <body name="calf1_body_fl">
-                                <joint name="calf1_joint_fl" type="hinge" pos="0.3 0.157 0.1" axis="1 0 0" damping="0.05" limited="false" />
+                                <joint name="calf1_joint_fl" type="hinge" pos="0.27 0.157 0.1" axis="1 0 0" damping="0.05" limited="false" />
                                 <geom name="calf1_fl" type="mesh" mesh="left_calf" />
                             </body>
                         </body>
@@ -113,7 +113,7 @@
                     </body>
 
                     <body name="thigh_limb_b1_fr">
-                        <joint name="thigh_limb_joint1_fr" type="hinge" pos="-0.6 0.015 0.515" axis="-1 0 0" damping="0.05" limited="false" />
+                        <joint name="thigh_limb_joint1_fr" type="hinge" pos="-0.85 0.015 0.515" axis="-1 0 0" damping="0.05" limited="false" />
                         <geom name="thigh_limb1_fr" type="mesh" mesh="right_thigh"  rgba="0.137 0.408 0.8 1" />
                     </body>
 
@@ -143,7 +143,7 @@
                     <geom name="servos_mount_bl" type="mesh" mesh="left_servo_mount"  />
                     <geom name="servo1_bl" type="mesh" mesh="left_thigh_servo" rgba="0 0 0 1"/>
                     <body name="thigh1_bl" pos="0 0 0">
-                        <joint name="thigh_joint1_bl" type="hinge" pos="0.24 -0.15 0.515" axis="1 0 0" range="0 45.0" damping="10" limited="true" />
+                        <joint name="thigh_joint1_bl" type="hinge" pos="0.2 -0.15 0.515" axis="1 0 0" range="0 45.0" damping="10" limited="true" />
                         <geom name="thigh_horn_bl1" type="mesh" mesh="left_thigh_horn" rgba="0.137 0.408 0.8 1" />
                         <body name="thigh_link_b1_bl">
                             <joint name="thigh_link_joint1_bl" type="hinge" pos="0.2 -0.16 0.685" axis="1 0 0" damping="0.05" limited="false" />
@@ -158,13 +158,13 @@
 
                     <geom name="servo2_bl" type="mesh" mesh="left_knee_servo" rgba="0 0 0 1" />
                     <body name="knee_bl" >
-                        <joint name="knee1_joint_bl" type="hinge" pos="0.24 0.015 0.515" axis="1 0 0" range="-25.0 25.0" damping="10" limited="true" />
+                        <joint name="knee1_joint_bl" type="hinge" pos="0.2 0.015 0.515" axis="1 0 0" range="-25.0 25.0" damping="10" limited="true" />
                         <geom name="knee_horn1_bl" type="mesh" mesh="left_knee_horn" />
                         <body name="knee_link_b1_bl">
-                            <joint name="knee1_link_joint_bl" type="hinge" pos="0.25 0.16 0.60" axis="1 0 0" damping="0.05" limited="false" />
+                            <joint name="knee1_link_joint_bl" type="hinge" pos="0.27 0.16 0.60" axis="1 0 0" damping="0.05" limited="false" />
                             <geom name="knee_link1_bl" type="mesh" mesh="left_knee_link" />
                             <body name="calf1_body_bl">
-                                <joint name="calf1_joint_bl" type="hinge" pos="0.3 0.157 0.1" axis="1 0 0" damping="0.05" limited="false" />
+                                <joint name="calf1_joint_bl" type="hinge" pos="0.27 0.157 0.1" axis="1 0 0" damping="0.05" limited="false" />
                                 <geom name="calf1_bl" type="mesh" mesh="left_calf" />
                             </body>
                         </body>
@@ -184,7 +184,7 @@
                     </body>
 
                     <body name="thigh_limb_b1_br">
-                        <joint name="thigh_limb_joint1_br" type="hinge" pos="-0.6 0.015 0.515" axis="-1 0 0" damping="0.05" limited="false" />
+                        <joint name="thigh_limb_joint1_br" type="hinge" pos="-0.85 0.015 0.515" axis="-1 0 0" damping="0.05" limited="false" />
                         <geom name="thigh_limb1_br" type="mesh" mesh="right_thigh"  rgba="0.137 0.408 0.8 1" />
                     </body>
 
