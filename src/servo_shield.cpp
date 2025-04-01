@@ -113,7 +113,7 @@ void ServoShield::set_position_with_filter(const int &new_position_cmd, const in
 //    sprintf(msg, "Setting servo %d mapped to %d to filtered value %d (original value %d)",
 //            servonum, servo_mapping[servonum], positions[servonum], new_position_cmd);
 //    std::cout << msg << std::endl;
-  apply_matching_servo_limits(servonum);
+  //apply_matching_servo_limits(servonum);
 
   write_to_servo(servonum);
 }
@@ -179,7 +179,7 @@ void ServoShield::reset_camera() {
 }
 
 void ServoShield::set_sensor_noise(std::string payload) {
-  std::cout << "Setting sensor noise to " << payload << std::endl;
+  std::cout << "Setting sensor noise to " << payload << " This was deprecated in 3.14 and doesn't work anymore!!!\nYou need to provide your own noise" << std::endl;
   std::vector<float> vect = Utils::parse_csv(std::move(payload));
 
   for (uint i = 0; i < vect.size() && i < (uint) m->nsensor; ++i) {
