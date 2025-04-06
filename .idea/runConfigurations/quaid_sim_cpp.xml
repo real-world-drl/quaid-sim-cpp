@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="quaid_sim_cpp" type="CMakeRunConfiguration" factoryName="Application" folderName="New Folder" PROGRAM_PARAMS="-q 10" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="quaid_sim_cpp" TARGET_NAME="quaid_sim_cpp" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="quaid_sim_cpp" RUN_TARGET_NAME="quaid_sim_cpp">
+  <configuration default="false" name="quaid_sim_cpp" type="CMakeRunConfiguration" factoryName="Application" folderName="New Folder" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="quaid_sim_cpp" TARGET_NAME="quaid_sim_cpp" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="quaid_sim_cpp" RUN_TARGET_NAME="quaid_sim_cpp">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>

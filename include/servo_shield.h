@@ -18,7 +18,7 @@
 #include <cmath>
 
 #include "utils.h"
-
+#include "settings.h"
 
 struct Limit {
   Limit(int min, int max, int center, int up) : min(min), max(max), center(center), up(up){
@@ -38,7 +38,7 @@ struct Limit {
 
 class ServoShield {
 public:
-  explicit ServoShield(mjModel* m, mjData* d, mjvCamera* cam);
+  explicit ServoShield(mjModel* m, mjData* d, mjvCamera* cam, std::shared_ptr<MqttSettings> settings);
 
   float EXP_FILTER_C = 0.5;
 
@@ -68,6 +68,8 @@ protected:
   mjData* d;
   mjModel* m;
   mjvCamera* cam;
+
+  std::shared_ptr<MqttSettings> settings;
 
   Limit limits[16] = {
           /*

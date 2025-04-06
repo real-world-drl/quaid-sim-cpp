@@ -5,7 +5,7 @@
 
 #include <utility>
 
-ServoShield::ServoShield(mjModel* m, mjData *d,mjvCamera *cam) : d(d), m(m), cam(cam) {
+ServoShield::ServoShield(mjModel* m, mjData *d,mjvCamera *cam, std::shared_ptr<MqttSettings> settings) : d(d), m(m), cam(cam), settings(settings) {
 
 }
 
@@ -55,6 +55,10 @@ int ServoShield::get_position(const int &servonum) {
 }
 
 void ServoShield::apply_matching_servo_limits(int const &servonum) {
+    if (settings->matching_servo_limits == -1) {
+        return;
+    }
+
   int matching_servo = -1;
   if (servonum == 0 || servonum == 4 || servonum == 8 || servonum == 12) {
     matching_servo = servonum + 1;
@@ -72,12 +76,12 @@ void ServoShield::apply_matching_servo_limits(int const &servonum) {
 //            servonum, matching_servo, positions[servonum], positions[matching_servo], diff);
 //  std::cout << msg << std::endl;
 
-  if (diff > MAX_MATCHING_SERVO_DIFFERENCE) {
-    positions[servonum] = positions[matching_servo] - MAX_MATCHING_SERVO_DIFFERENCE;
+  if (diff > settings->matching_servo_limits) {
+    positions[servonum] = positions[matching_servo] - settings->matching_servo_limits;
 //      Serial.print("Diff more than MAX adjusting value to ");
 //      Serial.println(positions[servonum]);
-  } else if (diff < -MAX_MATCHING_SERVO_DIFFERENCE) {
-    positions[servonum] = positions[matching_servo] + MAX_MATCHING_SERVO_DIFFERENCE;
+  } else if (diff < -settings->matching_servo_limits) {
+    positions[servonum] = positions[matching_servo] + settings->matching_servo_limits;
 //      Serial.print("Diff less than MAX adjusting value to ");
 //      Serial.println(positions[servonum]);
   }
@@ -113,7 +117,7 @@ void ServoShield::set_position_with_filter(const int &new_position_cmd, const in
 //    sprintf(msg, "Setting servo %d mapped to %d to filtered value %d (original value %d)",
 //            servonum, servo_mapping[servonum], positions[servonum], new_position_cmd);
 //    std::cout << msg << std::endl;
-  //apply_matching_servo_limits(servonum);
+  apply_matching_servo_limits(servonum);
 
   write_to_servo(servonum);
 }

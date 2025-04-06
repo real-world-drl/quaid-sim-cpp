@@ -37,4 +37,8 @@ void MqttSettings::parse(const std::string &path) {
   if (config["sensors"]["rotation_noise"]) {
     rotation_noise = config["sensors"]["rotation_noise"].as<float>();
   }
+
+  if (config["robot"]["matching_servo_limits"]) {
+      matching_servo_limits = config["robot"]["matching_servo_limits"].as<int>();
+  }
 }

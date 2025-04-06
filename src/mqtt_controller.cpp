@@ -193,7 +193,7 @@ bool MqttController::connect() {
       .will(mqtt::message(ACT_TOPIC, LWT_PAYLOAD, QOS))
       .finalize();
 
-  std::cout << "\nConnecting..." << std::endl;
+  std::cout << "\nQuaidSIM Connecting to " << this->settings->mqtt_server_ip << "..." << std::endl;
   mqtt::token_ptr conntok = client->connect(connOpts);
   std::cout << "Waiting for the connection..." << std::endl;
   conntok->wait();

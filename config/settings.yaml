@@ -1,10 +1,15 @@
 mqtt:
-  mqtt_queue_no: 10
-  mqtt_server_ip: uq3
+  mqtt_queue_no: 100
+  mqtt_server_ip: ml4u
 
 sim:
   obs_streaming_delay: 25
   mocap_streaming_delay: 25
+
+robot:
+  # previously set to 45
+  # -1 to disable
+  matching_servo_limits: -1
 
 sensors:
   position_noise: 0.05

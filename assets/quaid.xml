@@ -2,7 +2,7 @@
     <compiler inertiafromgeom="true" angle="degree" coordinate="local"/>
     <option timestep="0.005" gravity="0 0 -9.81" iterations="20" integrator="RK4" >
         <!-- this was deprecated in 3.14 - you need to add your own noise now -->
-        <!--<flag sensornoise="enable" />-->
+        <flag sensornoise="enable" />
     </option>
 
 
@@ -63,7 +63,7 @@
             <!--   this will make it fall down -->
             <freejoint/>
             <geom name="fuselage" type="mesh" mesh="fuselage" euler="0 0 90" />
-            <camera name="tracking_cam" mode="trackcom" pos="0 0 -50" target="quaid" />
+<!--            <camera name="tracking_cam" mode="trackcom" pos="0 0 -50" target="quaid" />-->
             <site name="imu" size="0.01" pos="-0.85 -0.3 0.5"/>
             <body name="front" pos="0 0 0" euler="0 0 90">
                 <geom name="pelvis_front" type="mesh" mesh="pelvis" />
