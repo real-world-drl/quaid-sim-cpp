@@ -18,7 +18,7 @@ void MqttController::init(std::shared_ptr<MqttSettings> settings, mjModel* m, mj
   ACT_TOPIC = (ACT_TOPIC_BASE + this->settings->mqtt_queue_no);
 
   client = std::make_shared<mqtt::async_client>(this->settings->mqtt_server_ip, CLIENT_ID, PERSIST_DIR);
-  servoShield = std::make_shared<ServoShield>(m, d, cam);
+  servoShield = std::make_shared<ServoShield>(m, d, cam, settings);
 
   std::cout << "MqttController on thread " << std::this_thread::get_id() << std::endl;
 }
