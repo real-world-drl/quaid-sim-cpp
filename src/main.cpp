@@ -105,16 +105,26 @@ void scroll(GLFWwindow* window, double xoffset, double yoffset) {
 
 // main function
 int main(int argc, const char** argv) {
-  std::string model_file = "../assets/quaid.xml";
+  std::string model_file = "";
   std::string config_file = "../config/settings.yaml";
   std::string mqtt_queue_no = "-1";
 
   CLI::App app{"Quaid-SIM"};
-  app.add_option("-m,--model", model_file, "MuJoCo model file path (defaults to ../assets/quaid.xml)");
+  app.add_option("-m,--model", model_file, "MuJoCo model file path (defaults based on version set in the settings file)");
   app.add_option("-c,--config", config_file, "Config file path (defaults to ../config/settings.yaml)");
   app.add_option("-q,--mqtt_queue_no", mqtt_queue_no, "MQTT queue no (defaults to the one in config file)");
 
   CLI11_PARSE(app, argc, argv);
+
+  std::shared_ptr<MqttSettings> settings = std::make_shared<MqttSettings>(config_file);
+
+  if (model_file.empty()) {
+      if (settings->version == 1) {
+          model_file = "../assets/quaid.xml";
+      } else {
+          model_file = "../assets/v2/quaid_v2.xml";
+      }
+  }
 
   // load and compile model
   char error[1000] = "Could not load binary model";
@@ -130,7 +140,7 @@ int main(int argc, const char** argv) {
   // make data
   d = mj_makeData(m);
 
-  QuaidController::init_controller(m, d, &cam, config_file, mqtt_queue_no);
+  QuaidController::init_controller(m, d, &cam, settings, mqtt_queue_no);
 
   // init GLFW
   if (!glfwInit()) {

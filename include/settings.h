@@ -22,6 +22,7 @@ public:
     float position_noise, rotation_noise = 0.0;
 
     int matching_servo_limits = 45;
+    int version = 2;
 
 protected:
     void parse(const std::string &path);

@@ -6,7 +6,11 @@
 #include <utility>
 
 ServoShield::ServoShield(mjModel* m, mjData *d,mjvCamera *cam, std::shared_ptr<MqttSettings> settings) : d(d), m(m), cam(cam), settings(settings) {
-
+    if (settings->version == 1) {
+        this->limits = this->limits_v1;
+    } else {
+        this->limits = this->limits_v2;
+    }
 }
 
 void ServoShield::center_servos() {
@@ -129,8 +133,10 @@ void ServoShield::write_to_servo(const int &servonum) {
     float mapped_position = Utils::map(positions[servonum], limits[servonum].min, limits[servonum].max,
                                 limits[servonum].control_min, limits[servonum].control_max);
     d->ctrl[mapped_servo] = mapped_position;
-    // std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
-    //          << mapped_position << " mapped from " << positions[servonum] << std::endl;
+    /* * /
+     std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
+              << mapped_position << " mapped from " << positions[servonum] << std::endl;
+  / * */
   }
 }
 

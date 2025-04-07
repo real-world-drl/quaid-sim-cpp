@@ -7,9 +7,11 @@ sim:
   mocap_streaming_delay: 25
 
 robot:
+  # version 1 is the original quaid used during my PhD, v2 is the updated version that matches the physical robot
+  version: 2
   # previously set to 45
   # -1 to disable
-  matching_servo_limits: -1
+  matching_servo_limits: 45
 
 sensors:
   position_noise: 0.05
