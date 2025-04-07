@@ -74,23 +74,23 @@ protected:
     std::vector<Limit> limits_v2 = {
             /* quaid-sim-v2 */
             //Back Left
-            Limit(185, 430, 308, 185, -0.5, 0.5),
-            Limit(308, 430, 369, 430, 0, 0.75), // the control min/max correspond to joint settings in the XML
+            Limit(185, 430, 308, 185, -1.0, 1.0),
+            Limit(308, 430, 369, 430, 0, 1), // the control min/max correspond to joint settings in the XML
             Limit(0, 0, 0, 0), // unused
             Limit(0, 0, 0, 0), // unused
             // back right
-            Limit(185, 430, 308, 185, -0.5, 0.5),
-            Limit(185, 308, 246, 308, -0.75, 0),
+            Limit(185, 430, 308, 185, -1.0, 1.0),
+            Limit(185, 308, 246, 308, -1, 0),
             Limit(0, 0, 0, 0), // unused
             Limit(0, 0, 0, 0), // unused
             // Front Right
-            Limit(185, 430, 308, 185, -0.5, 0.5),
-            Limit(185, 308, 246, 308, -0.75, 0),
+            Limit(185, 430, 308, 185, -1.0, 1.0),
+            Limit(185, 308, 246, 308, -1, 0),
             Limit(0, 0, 0, 0), // unused
             Limit(100, 500, 300, 300), // distance sensor up-down
             // Front Left
-            Limit(185, 430, 308, 185, -0.5, 0.5),
-            Limit(308, 430, 369, 430, 0, 0.75),
+            Limit(185, 430, 308, 185, -1.0, 1.0),
+            Limit(308, 430, 369, 430, 0, 1),
             Limit(0, 0, 0, 0), // unused
             Limit(100, 500, 300, 300) // distance sensor left-right
     };

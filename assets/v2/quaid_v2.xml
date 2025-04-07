@@ -234,7 +234,7 @@
     </equality>
 
     <actuator>
-        <position joint="knee1_joint_fl" ctrlrange="-0.50 0.50"
+        <position joint="knee1_joint_fl" ctrlrange="-1 1"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_fl"/>
         <velocity joint="knee1_joint_fl" kv="1" name="knee1_velocity_fl" />
@@ -244,7 +244,7 @@
                   ctrllimited="true" name="thigh_servo1_fl"/>
         <velocity joint="thigh_joint1_fl" kv="1" name="thigh1_velocity_fl" />
 
-        <position joint="knee1_joint_fr" ctrlrange="-0.50 0.50"
+        <position joint="knee1_joint_fr" ctrlrange="-1 1"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_fr"/>
         <velocity joint="knee1_joint_fr" kv="1" name="knee1_velocity_fr" />
@@ -256,7 +256,7 @@
 
 
 
-        <position joint="knee1_joint_bl" ctrlrange="-0.50 0.50"
+        <position joint="knee1_joint_bl" ctrlrange="-1 1"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_bl"/>
         <velocity joint="knee1_joint_bl" kv="1" name="knee1_velocity_bl" />
@@ -266,7 +266,7 @@
                   ctrllimited="true" name="thigh_servo1_bl"/>
         <velocity joint="thigh_joint1_bl" kv="1" name="thigh1_velocity_bl" />
 
-        <position joint="knee1_joint_br" ctrlrange="-0.50 0.50"
+        <position joint="knee1_joint_br" ctrlrange="-1 1"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_br"/>
         <velocity joint="knee1_joint_br" kv="1" name="knee1_velocity_br" />
