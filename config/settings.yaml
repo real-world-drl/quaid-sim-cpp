@@ -11,7 +11,7 @@ robot:
   version: 2
   # previously set to 45
   # -1 to disable
-  matching_servo_limits: 45
+  matching_servo_limits: -1
 
 sensors:
   position_noise: 0.05
