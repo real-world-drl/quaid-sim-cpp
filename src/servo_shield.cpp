@@ -137,6 +137,7 @@ void ServoShield::write_to_servo(const int &servonum) {
      std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
               << mapped_position << " mapped from " << positions[servonum] << std::endl;
   / * */
+    //reset_camera();
   }
 }
 

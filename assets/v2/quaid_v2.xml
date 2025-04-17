@@ -2,7 +2,7 @@
     <compiler inertiafromgeom="true" angle="degree" coordinate="local"/>
     <option timestep="0.005" gravity="0 0 -9.81" iterations="20" integrator="RK4" >
         <!-- this was deprecated in 3.14 - you need to add your own noise now -->
-        <flag sensornoise="enable" />
+<!--        <flag sensornoise="enable" />-->
     </option>
 
     <asset>
@@ -279,8 +279,8 @@
     </actuator>
 
     <sensor>
-        <framequat name="orientation" objtype="site" objname="imu" noise="0.0"/>
-        <framepos name="position" objtype="site" objname="imu" noise="0.0"/>
+        <framequat name="orientation" objtype="site" objname="imu" noise="0.05"/>
+        <framepos name="position" objtype="site" objname="imu" noise="0.05"/>
         <gyro name="gyro" site="imu" /> <!--  noise="5e-4" cutoff="34.9" -->
         <accelerometer name="acceleration" site="imu" /> <!-- noise="1e-2" cutoff="157" -->
         <magnetometer name="magnetometer" site="imu"/>

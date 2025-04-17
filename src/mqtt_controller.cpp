@@ -102,19 +102,23 @@ void MqttController::stopStreamingObservations() {
 
 void MqttController::streamObservations() {
   auto lastSent = std::chrono::high_resolution_clock::now();
+
+  euler_t ypr{};
+
   while (isStreamingObservations) {
     auto now = std::chrono::high_resolution_clock::now();
     auto time_delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSent).count();
     lastSent = now;
 
+    Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     char cmd[150] = "";
     sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
             time_delta,
             // std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
             0L,
-            0.0, //Bno::euler.yaw,
-            0.0, //Bno::euler.pitch,
-            0.0, //Bno::euler.roll,
+            ypr.yaw, //Bno::euler.yaw,
+            ypr.pitch, //Bno::euler.pitch,
+            ypr.roll, //Bno::euler.roll,
             0, // voltage
             0, // current
 
@@ -161,9 +165,10 @@ void MqttController::stopStreamingMocapData() {
 
 void MqttController::streamMocapData() {
   euler_t ypr{};
+
   while (isStreamingMocap) {
-    char cmd[150] = "";
     Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
+    char cmd[150] = "";
     sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
             d->sensordata[4] * 10, d->sensordata[5] * 10, d->sensordata[6] * 10,
             ypr.yaw, ypr.pitch, ypr.roll
