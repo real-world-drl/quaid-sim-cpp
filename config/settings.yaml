@@ -1,6 +1,6 @@
 mqtt:
   mqtt_queue_no: 100
-  mqtt_server_ip: uq3
+  mqtt_server_ip: mqtt-server
 
 sim:
   obs_streaming_delay: 25
