@@ -48,7 +48,7 @@ bool MqttController::readDataPacket(std::string payload) {
       break;
     case 'r':
       std::thread(&ServoShield::center_servos, servoShield).detach();
-      // servoShield->center_servos();
+          // servoShield->center_servos();
       break;
     case 'e':
       std::thread(&ServoShield::stand_up, servoShield).detach();
@@ -112,7 +112,7 @@ void MqttController::streamObservations() {
 
     Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
     char cmd[150] = "";
-    sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+    sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
             time_delta,
             // std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
             0L,
@@ -132,7 +132,11 @@ void MqttController::streamObservations() {
             servoShield->get_position(9),
 
             servoShield->get_position(12),
-            servoShield->get_position(13)
+            servoShield->get_position(13),
+
+            // torque sensors knee-fl, thigh-fl, knee-fr, thigh-fr, knee-bl, thigh-bl, knee-br, thigh-br
+            d->sensordata[7], d->sensordata[8], d->sensordata[9], d->sensordata[10],
+            d->sensordata[11], d->sensordata[12], d->sensordata[13], d->sensordata[14]
 
     );
 

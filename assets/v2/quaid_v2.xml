@@ -85,7 +85,7 @@
 
                     <geom name="servo2_fl" type="mesh" mesh="left_knee_servo" rgba="0 0 0 1" />
                     <body name="knee_fl" >
-                        <joint name="knee1_joint_fl" type="hinge" pos="0.1 0.085 0.11" axis="1 0 0" range="-25 25.0" damping="10" limited="true" />
+                        <joint name="knee1_joint_fl" type="hinge" pos="0.1 0.085 0.11" axis="1 0 0" range="-25 25.0" damping="10" limited="true"  />
                         <geom name="knee_horn1_fl" type="mesh" mesh="left_knee_horn" />
                         <body name="knee_link_b1_fl">
                             <joint name="knee1_link_joint_fl" type="hinge" pos="0.1 0.225 0.205" axis="1 0 0" damping="0.05" limited="false" />
@@ -234,44 +234,44 @@
     </equality>
 
     <actuator>
-        <position joint="knee1_joint_fl" ctrlrange="-1 1"
+        <position joint="knee1_joint_fl" ctrlrange="-0.5 0.5"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_fl"/>
         <velocity joint="knee1_joint_fl" kv="1" name="knee1_velocity_fl" />
 
-        <position joint="thigh_joint1_fl" ctrlrange="0 1.0"
+        <position joint="thigh_joint1_fl" ctrlrange="0 0.60"
                   kp="200"
                   ctrllimited="true" name="thigh_servo1_fl"/>
         <velocity joint="thigh_joint1_fl" kv="1" name="thigh1_velocity_fl" />
 
-        <position joint="knee1_joint_fr" ctrlrange="-1 1"
+        <position joint="knee1_joint_fr" ctrlrange="-0.5 0.5"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_fr"/>
         <velocity joint="knee1_joint_fr" kv="1" name="knee1_velocity_fr" />
 
-        <position joint="thigh_joint1_fr" ctrlrange="-1.0 0"
+        <position joint="thigh_joint1_fr" ctrlrange="-0.6 0"
                   kp="200"
                   ctrllimited="true" name="thigh_servo1_fr"/>
         <velocity joint="thigh_joint1_fr" kv="1" name="thigh1_velocity_fr" />
 
 
 
-        <position joint="knee1_joint_bl" ctrlrange="-1 1"
+        <position joint="knee1_joint_bl" ctrlrange="-0.5 0.5"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_bl"/>
         <velocity joint="knee1_joint_bl" kv="1" name="knee1_velocity_bl" />
 
-        <position joint="thigh_joint1_bl" ctrlrange="0 1.0"
+        <position joint="thigh_joint1_bl" ctrlrange="0 0.60"
                   kp="200"
                   ctrllimited="true" name="thigh_servo1_bl"/>
         <velocity joint="thigh_joint1_bl" kv="1" name="thigh1_velocity_bl" />
 
-        <position joint="knee1_joint_br" ctrlrange="-1 1"
+        <position joint="knee1_joint_br" ctrlrange="-0.5 0.5"
                   kp="200"
                   ctrllimited="true" name="knee_servo1_br"/>
         <velocity joint="knee1_joint_br" kv="1" name="knee1_velocity_br" />
 
-        <position joint="thigh_joint1_br" ctrlrange="-1.0 0"
+        <position joint="thigh_joint1_br" ctrlrange="-0.60 0"
                   kp="200"
                   ctrllimited="true" name="thigh_servo1_br"/>
         <velocity joint="thigh_joint1_br" kv="1" name="thigh1_velocity_br" />
@@ -281,8 +281,32 @@
     <sensor>
         <framequat name="orientation" objtype="site" objname="imu" noise="0.05"/>
         <framepos name="position" objtype="site" objname="imu" noise="0.05"/>
-        <gyro name="gyro" site="imu" /> <!--  noise="5e-4" cutoff="34.9" -->
-        <accelerometer name="acceleration" site="imu" /> <!-- noise="1e-2" cutoff="157" -->
-        <magnetometer name="magnetometer" site="imu"/>
+<!--        <gyro name="gyro" site="imu" /> &lt;!&ndash;  noise="5e-4" cutoff="34.9" &ndash;&gt;-->
+<!--        <accelerometer name="acceleration" site="imu" /> &lt;!&ndash; noise="1e-2" cutoff="157" &ndash;&gt;-->
+<!--        <magnetometer name="magnetometer" site="imu"/>-->
+
+        <!--
+        <actuatorfrc name="knee_fl_torque" actuator="knee_servo1_fl"/>
+        <actuatorfrc name="thigh_fl_torque" actuator="thigh_servo1_fl"/>
+        <actuatorfrc name="knee_fr_torque" actuator="knee_servo1_fr"/>
+        <actuatorfrc name="thigh_fr_torque" actuator="thigh_servo1_fr"/>
+
+        <actuatorfrc name="knee_bl_torque" actuator="knee_servo1_bl"/>
+        <actuatorfrc name="thigh_bl_torque" actuator="thigh_servo1_bl"/>
+        <actuatorfrc name="knee_br_torque" actuator="knee_servo1_br"/>
+        <actuatorfrc name="thigh_br_torque" actuator="thigh_servo1_br"/>
+        -->
+
+        <!-- these should measure the force at joint -->
+        <jointactuatorfrc name="knee_fl_torque" joint="knee1_joint_fl" />
+        <jointactuatorfrc name="thigh_fl_torque" joint="thigh_joint1_fl" />
+        <jointactuatorfrc name="knee_fr_torque" joint="knee1_joint_fr" />
+        <jointactuatorfrc name="thigh_fr_torque" joint="thigh_joint1_fr" />
+
+        <jointactuatorfrc name="knee_bl_torque" joint="knee1_joint_bl" />
+        <jointactuatorfrc name="thigh_bl_torque" joint="thigh_joint1_bl" />
+        <jointactuatorfrc name="knee_br_torque" joint="knee1_joint_br" />
+        <jointactuatorfrc name="thigh_br_torque" joint="thigh_joint1_br" />
+        <!-- -->
     </sensor>
 </mujoco>
