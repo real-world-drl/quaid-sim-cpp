@@ -281,9 +281,6 @@
     <sensor>
         <framequat name="orientation" objtype="site" objname="imu" noise="0.05"/>
         <framepos name="position" objtype="site" objname="imu" noise="0.05"/>
-<!--        <gyro name="gyro" site="imu" /> &lt;!&ndash;  noise="5e-4" cutoff="34.9" &ndash;&gt;-->
-<!--        <accelerometer name="acceleration" site="imu" /> &lt;!&ndash; noise="1e-2" cutoff="157" &ndash;&gt;-->
-<!--        <magnetometer name="magnetometer" site="imu"/>-->
 
         <!--
         <actuatorfrc name="knee_fl_torque" actuator="knee_servo1_fl"/>
@@ -308,5 +305,8 @@
         <jointactuatorfrc name="knee_br_torque" joint="knee1_joint_br" />
         <jointactuatorfrc name="thigh_br_torque" joint="thigh_joint1_br" />
         <!-- -->
+        <accelerometer name="acceleration" site="imu" /> <!-- noise="1e-2" cutoff="157" -->
+        <gyro name="gyro" site="imu" /> <!--  noise="5e-4" cutoff="34.9" -->
+        <magnetometer name="magnetometer" site="imu"/>
     </sensor>
 </mujoco>
