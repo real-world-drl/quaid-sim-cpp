@@ -73,4 +73,28 @@ protected:
 
 };
 
+struct StateObservations {
+    uint8_t header = 0x0A;
+
+    int16_t time_delta;
+    float distance;
+    float yaw;
+    float pitch;
+    float roll;
+
+    float voltage;
+    float current;
+
+    int16_t position_knee_front_left;
+    int16_t position_thigh_front_left;
+    int16_t position_knee_front_right;
+    int16_t position_thigh_front_right;
+
+    int16_t position_knee_back_left;
+    int16_t position_thigh_back_left;
+    int16_t position_knee_back_right;
+    int16_t position_thigh_back_right;
+
+} __attribute__((packed));
+
 #endif //QUAID_SIM_CPP_MQTT_CONTROLLER_H

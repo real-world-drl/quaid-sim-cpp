@@ -54,8 +54,8 @@ void ServoShield::set_position(int const &new_position, int const &servonum) {
   write_to_servo(servonum);
 }
 
-int ServoShield::get_position(const int &servonum) {
-  return positions[servonum];
+int16_t ServoShield::get_position(const int &servonum) {
+  return (int16_t) positions[servonum];
 }
 
 void ServoShield::apply_matching_servo_limits(int const &servonum) {

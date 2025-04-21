@@ -9,213 +9,231 @@ MqttController::~MqttController() {
 }
 
 void MqttController::init(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam) {
-  this->settings = settings;
-  this->d = d;
+    this->settings = settings;
+    this->d = d;
 
-  CLIENT_ID = (CLIENT_ID_BASE + this->settings->mqtt_queue_no);
-  OBS_TOPIC = (OBS_TOPIC_BASE + this->settings->mqtt_queue_no);
-  OBS_MOCAP_TOPIC = (OBS_MOCAP_TOPIC_BASE + this->settings->mqtt_queue_no);
-  ACT_TOPIC = (ACT_TOPIC_BASE + this->settings->mqtt_queue_no);
+    CLIENT_ID = (CLIENT_ID_BASE + this->settings->mqtt_queue_no);
+    OBS_TOPIC = (OBS_TOPIC_BASE + this->settings->mqtt_queue_no);
+    OBS_MOCAP_TOPIC = (OBS_MOCAP_TOPIC_BASE + this->settings->mqtt_queue_no);
+    ACT_TOPIC = (ACT_TOPIC_BASE + this->settings->mqtt_queue_no);
 
-  client = std::make_shared<mqtt::async_client>(this->settings->mqtt_server_ip, CLIENT_ID, PERSIST_DIR);
-  servoShield = std::make_shared<ServoShield>(m, d, cam, settings);
+    client = std::make_shared<mqtt::async_client>(this->settings->mqtt_server_ip, CLIENT_ID, PERSIST_DIR);
+    servoShield = std::make_shared<ServoShield>(m, d, cam, settings);
 
-  std::cout << "MqttController on thread " << std::this_thread::get_id() << std::endl;
+    std::cout << "MqttController on thread " << std::this_thread::get_id() << std::endl;
 }
 
 bool MqttController::readDataPacket(std::string payload) {
-  // std::cout << "Received message:\n" << payload << std::endl;
+    // std::cout << "Received message:\n" << payload << std::endl;
 
-  char cmd = payload.c_str()[0];
+    char cmd = payload.c_str()[0];
 
-  switch(cmd) {
-    case 'a':
+    switch(cmd) {
+        case 'a':
 //      std::thread(&ServoShield::move_servos, servoShield, payload, true).detach();
-       servoShield->move_servos(payload);
-      break;
-    case 'b':
+            servoShield->move_servos(payload);
+            break;
+        case 'b':
 //      std::thread(&ServoShield::move_servos, servoShield, payload, false).detach();
-       servoShield->move_servos(payload, false);
-      break;
-    case 'u':
-      settings->streamingDelay = atoi(payload.substr(1).c_str());
-      break;
-    case 'i':
-      settings->actingDelay = atoi(payload.substr(1).c_str());
-      break;
-    case 'f':
-      servoShield->EXP_FILTER_C = atof(payload.substr(1).c_str());
-      break;
-    case 'r':
-      std::thread(&ServoShield::center_servos, servoShield).detach();
-          // servoShield->center_servos();
-      break;
-    case 'e':
-      std::thread(&ServoShield::stand_up, servoShield).detach();
-      // servoShield->stand_up();
-      break;
-    case 'x':
-      startStreamingObservations();
-      break;
-    case 'y':
-      stopStreamingObservations();
-      break;
-    case 'm':
-      startStreamingMocapData();
-      break;
-    case 'n':
-      servoShield->set_sensor_noise(payload.substr(1));
-      break;
+            servoShield->move_servos(payload, false);
+            break;
+        case 'u':
+            settings->streamingDelay = atoi(payload.substr(1).c_str());
+            break;
+        case 'i':
+            settings->actingDelay = atoi(payload.substr(1).c_str());
+            break;
+        case 'f':
+            servoShield->EXP_FILTER_C = atof(payload.substr(1).c_str());
+            break;
+        case 'r':
+            std::thread(&ServoShield::center_servos, servoShield).detach();
+            // servoShield->center_servos();
+            break;
+        case 'e':
+            std::thread(&ServoShield::stand_up, servoShield).detach();
+            // servoShield->stand_up();
+            break;
+        case 'x':
+            startStreamingObservations();
+            break;
+        case 'y':
+            stopStreamingObservations();
+            break;
+        case 'm':
+            startStreamingMocapData();
+            break;
+        case 'n':
+            servoShield->set_sensor_noise(payload.substr(1));
+            break;
 
-    case 'p':
-      if (payload.substr(1, 2) == "TH") {
-        servoShield->reset_marker(atof(payload.substr(3).c_str()) / RAD_TO_DEG);
-        servoShield->reset_camera();
-      }
-      break;
+        case 'p':
+            if (payload.substr(1, 2) == "TH") {
+                servoShield->reset_marker(atof(payload.substr(3).c_str()) / RAD_TO_DEG);
+                servoShield->reset_camera();
+            }
+            break;
 
-    case 'q':
-      servoShield->move_marker(payload);
-      break;
-    case 'w':
-      servoShield->reset_camera();
-      break;
+        case 'q':
+            servoShield->move_marker(payload);
+            break;
+        case 'w':
+            servoShield->reset_camera();
+            break;
 
-    default: break; // keep the current course
-  }
+        default: break; // keep the current course
+    }
 
-  return true;
+    return true;
 }
 
 void MqttController::startStreamingObservations() {
-  if (!isStreamingObservations) {
-    isStreamingObservations = true;
-    std::thread(&MqttController::streamObservations, this).detach();
-    std::cout << "Started streaming observations to " << OBS_TOPIC << std::endl;
-  }
+    if (!isStreamingObservations) {
+        isStreamingObservations = true;
+        std::thread(&MqttController::streamObservations, this).detach();
+        std::cout << "Started streaming observations to " << OBS_TOPIC << std::endl;
+    }
 }
 
 void MqttController::stopStreamingObservations() {
     std::cout << "Stopping observations streaming..." << std::endl;
-  isStreamingObservations = false;
+    isStreamingObservations = false;
 }
 
 void MqttController::streamObservations() {
-  auto lastSent = std::chrono::high_resolution_clock::now();
+    auto lastSent = std::chrono::high_resolution_clock::now();
 
-  euler_t ypr{};
+    euler_t ypr{};
 
-  while (isStreamingObservations) {
-    auto now = std::chrono::high_resolution_clock::now();
-    auto time_delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSent).count();
-    lastSent = now;
+    while (isStreamingObservations) {
+        auto now = std::chrono::high_resolution_clock::now();
+        auto time_delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSent).count();
+        lastSent = now;
 
-    Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
-    char cmd[150] = "";
-    sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-            time_delta,
-            // std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
-            0L,
-            ypr.yaw, //Bno::euler.yaw,
-            ypr.pitch, //Bno::euler.pitch,
-            ypr.roll, //Bno::euler.roll,
-            0, // voltage
-            0, // current
+        // force generated by joint actuators is a proxy for current
+        // each generates +-100 units. The robot maxes out at ~7Amp so to get from force to amps / 100.0
+        float current = fabs(d->sensordata[7]) + fabs(d->sensordata[8]) + fabs(d->sensordata[9]) + fabs(d->sensordata[10])
+                        + fabs(d->sensordata[11]) + fabs(d->sensordata[12]) + fabs(d->sensordata[13]) + fabs(d->sensordata[14]);
+        current /= 100.0;
 
-            servoShield->get_position(0),
-            servoShield->get_position(1),
+        Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
+        char cmd[150] = "";
+        sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+                time_delta,
+                // std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
+                0L,
+                ypr.yaw, //Bno::euler.yaw,
+                ypr.pitch, //Bno::euler.pitch,
+                ypr.roll, //Bno::euler.roll,
+                0, // voltage
+                current, // current
 
-            servoShield->get_position(4),
-            servoShield->get_position(5),
+                servoShield->get_position(0),
+                servoShield->get_position(1),
 
-            servoShield->get_position(8),
-            servoShield->get_position(9),
+                servoShield->get_position(4),
+                servoShield->get_position(5),
 
-            servoShield->get_position(12),
-            servoShield->get_position(13),
+                servoShield->get_position(8),
+                servoShield->get_position(9),
 
-            // torque sensors knee-fl, thigh-fl, knee-fr, thigh-fr, knee-bl, thigh-bl, knee-br, thigh-br
-            d->sensordata[7], d->sensordata[8], d->sensordata[9], d->sensordata[10],
-            d->sensordata[11], d->sensordata[12], d->sensordata[13], d->sensordata[14]
+                servoShield->get_position(12),
+                servoShield->get_position(13),
 
-    );
+                // torque sensors knee-fl, thigh-fl, knee-fr, thigh-fr, knee-bl, thigh-bl, knee-br, thigh-br
+                d->sensordata[7], d->sensordata[8], d->sensordata[9], d->sensordata[10],
+                d->sensordata[11], d->sensordata[12], d->sensordata[13], d->sensordata[14]
+        );
 
-    try {
-      mqtt::message_ptr pubmsg = mqtt::make_message(OBS_TOPIC, cmd);
-      pubmsg->set_qos(QOS);
-      client->publish(OBS_TOPIC, cmd);
-    } catch (const mqtt::exception& exc) {
-      std::cerr << "Error streaming observations: " << exc.what() << " ["
-           << exc.get_reason_code() << "]" << std::endl;
+        try {
+            mqtt::message_ptr pubmsg = mqtt::make_message(OBS_TOPIC, cmd);
+            pubmsg->set_qos(QOS);
+            client->publish(OBS_TOPIC, cmd);
+        } catch (const mqtt::exception& exc) {
+            std::cerr << "Error streaming observations: " << exc.what() << " ["
+                      << exc.get_reason_code() << "]" << std::endl;
+        }
+
+        StateObservations obs = {
+                .time_delta = (int16_t) time_delta,
+                .distance = 0,
+                .yaw = ypr.yaw, .pitch = ypr.pitch, .roll = ypr.roll,
+                .voltage = 0, .current = current,
+                .position_knee_front_left = servoShield->get_position(0), .position_thigh_front_left = servoShield->get_position(1),
+                .position_knee_front_right = servoShield->get_position(4), .position_thigh_front_right = servoShield->get_position(5),
+                .position_knee_back_left = servoShield->get_position(8), .position_thigh_back_left = servoShield->get_position(9),
+                .position_knee_back_right = servoShield->get_position(12), .position_thigh_back_right = servoShield->get_position(13),
+        };
+        mqtt::message_ptr bin_msg = mqtt::make_message(OBS_TOPIC + "BIN", &obs, sizeof(obs));
+        client->publish(bin_msg);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(settings->streamingDelay));
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(settings->streamingDelay));
-  }
-  std::cout << "Observations streaming stopped" << std::endl;
+    std::cout << "Observations streaming stopped" << std::endl;
 }
 
 void MqttController::startStreamingMocapData() {
-  if (!isStreamingMocap) {
-    isStreamingMocap = true;
-    std::thread(&MqttController::streamMocapData, this).detach();
-    std::cout << "Started streaming mocap observations to " << OBS_MOCAP_TOPIC << std::endl;
-  }
+    if (!isStreamingMocap) {
+        isStreamingMocap = true;
+        std::thread(&MqttController::streamMocapData, this).detach();
+        std::cout << "Started streaming mocap observations to " << OBS_MOCAP_TOPIC << std::endl;
+    }
 }
 
 void MqttController::stopStreamingMocapData() {
     std::cout << "Stopping mocap data..." << std::endl;
-  isStreamingMocap = false;
+    isStreamingMocap = false;
 }
 
 void MqttController::streamMocapData() {
-  euler_t ypr{};
+    euler_t ypr{};
 
-  while (isStreamingMocap) {
-    Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
-    char cmd[150] = "";
-    sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-            d->sensordata[4] * 10, d->sensordata[5] * 10, d->sensordata[6] * 10,
-            ypr.yaw, ypr.pitch, ypr.roll
-            );
-    try {
-      client->publish(OBS_MOCAP_TOPIC, cmd);
-    } catch (const mqtt::exception& exc) {
-      std::cerr << "Error streaming mocap: " << exc.what() << " ["
-                << exc.get_reason_code() << "]" << std::endl;
+    while (isStreamingMocap) {
+        Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
+        char cmd[150] = "";
+        sprintf(cmd, "S1,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+                d->sensordata[4] * 10, d->sensordata[5] * 10, d->sensordata[6] * 10,
+                ypr.yaw, ypr.pitch, ypr.roll
+        );
+        try {
+            client->publish(OBS_MOCAP_TOPIC, cmd);
+        } catch (const mqtt::exception& exc) {
+            std::cerr << "Error streaming mocap: " << exc.what() << " ["
+                      << exc.get_reason_code() << "]" << std::endl;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(settings->mocapStreamingDelay));
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(settings->mocapStreamingDelay));
-  }
-  std::cout << "Streaming mocap data stopped" << std::endl;
+    std::cout << "Streaming mocap data stopped" << std::endl;
 }
 
 
 bool MqttController::connect() {
 //  min_callback mcb{this};
 //  client->set_callback(mcb);
-  client->set_message_callback([this](const mqtt::const_message_ptr& msg) {
-      readDataPacket(msg->get_payload());
-  });
+    client->set_message_callback([this](const mqtt::const_message_ptr& msg) {
+        readDataPacket(msg->get_payload());
+    });
 
-  auto connOpts = mqtt::connect_options_builder()
-      .clean_session()
-      .will(mqtt::message(ACT_TOPIC, LWT_PAYLOAD, QOS))
-      .finalize();
+    auto connOpts = mqtt::connect_options_builder()
+            .clean_session()
+            .will(mqtt::message(ACT_TOPIC, LWT_PAYLOAD, QOS))
+            .finalize();
 
-  std::cout << "\nQuaidSIM Connecting to " << this->settings->mqtt_server_ip << "..." << std::endl;
-  mqtt::token_ptr conntok = client->connect(connOpts);
-  std::cout << "Waiting for the connection..." << std::endl;
-  conntok->wait();
-  std::cout << "  ...OK" << std::endl;
-  client->subscribe(ACT_TOPIC, QOS);
+    std::cout << "\nQuaidSIM Connecting to " << this->settings->mqtt_server_ip << "..." << std::endl;
+    mqtt::token_ptr conntok = client->connect(connOpts);
+    std::cout << "Waiting for the connection..." << std::endl;
+    conntok->wait();
+    std::cout << "  ...OK" << std::endl;
+    client->subscribe(ACT_TOPIC, QOS);
 
-  std::cout << "Subscribed to " << ACT_TOPIC << std::endl;
+    std::cout << "Subscribed to " << ACT_TOPIC << std::endl;
 
-  return true;
+    return true;
 }
 
 void MqttController::disconnect() const {
-  std::cout << "\nDisconnecting..." << std::endl;
-  client->disconnect()->wait();
-  std::cout << "  ...OK" << std::endl;
+    std::cout << "\nDisconnecting..." << std::endl;
+    client->disconnect()->wait();
+    std::cout << "  ...OK" << std::endl;
 }

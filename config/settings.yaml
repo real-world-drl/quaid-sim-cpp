@@ -3,7 +3,7 @@ mqtt:
   mqtt_server_ip: mqtt-server
 
 sim:
-  obs_streaming_delay: 25
+  obs_streaming_delay: 15
   mocap_streaming_delay: 25
 
 robot:

@@ -51,7 +51,7 @@ public:
 
     void set_action(float const &new_position_cmd, int const &servonum);
     void set_position(int const &new_position_cmd, int const &servonum);
-    int get_position(const int &servonum);
+    int16_t get_position(const int &servonum);
 
     void reset_marker(float theta);
     void move_marker(std::string payload);
