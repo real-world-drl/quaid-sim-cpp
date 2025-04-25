@@ -202,6 +202,18 @@ void MqttController::streamMocapData() {
                       << exc.get_reason_code() << "]" << std::endl;
         }
 
+        MocapData mocapData = {
+                .header = 0x0E,
+                .x = static_cast<int16_t>(d->sensordata[4] * 10),
+                .y = static_cast<int16_t>(d->sensordata[5] * 10),
+                .z = static_cast<int16_t>(d->sensordata[6] * 10),
+                .yaw = ypr.yaw,
+                .pitch = ypr.pitch,
+                .roll = ypr.roll,
+        };
+        mqtt::message_ptr bin_msg = mqtt::make_message(OBS_MOCAP_TOPIC + "BIN", &mocapData, sizeof(mocapData));
+        client->publish(bin_msg);
+
         std::this_thread::sleep_for(std::chrono::milliseconds(settings->mocapStreamingDelay));
     }
     std::cout << "Streaming mocap data stopped" << std::endl;

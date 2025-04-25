@@ -97,4 +97,23 @@ struct StateObservations {
 
 } __attribute__((packed));
 
+typedef struct {
+    uint8_t header;
+    bool degrees;
+    uint8_t rigid_body_no;
+
+    int16_t x;
+    int16_t y;
+    int16_t z;
+
+    float yaw;
+    float pitch;
+    float roll;
+
+    float qr;
+    float qi;
+    float qj;
+    float qk;
+} __attribute__((packed)) MocapData;
+
 #endif //QUAID_SIM_CPP_MQTT_CONTROLLER_H
