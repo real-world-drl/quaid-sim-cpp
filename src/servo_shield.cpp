@@ -143,6 +143,23 @@ void ServoShield::write_to_servo(const int &servonum) {
 
 
 
+void ServoShield::reset_body(int body_index, float theta) {
+    quat_t quat{};
+    Utils::eulerToQuaternion(theta, 0, 0, &quat);
+    int position_index = body_index * 3;
+    int attitude_index = body_index * 4;
+
+    d->mocap_pos[position_index] = d->sensordata[4];
+    d->mocap_pos[position_index + 1] = d->sensordata[5];
+
+    d->mocap_quat[attitude_index] = quat.qr;
+    d->mocap_quat[attitude_index + 1] = quat.qi;
+    d->mocap_quat[attitude_index + 2] = quat.qj;
+    d->mocap_quat[attitude_index + 3] = quat.qk;
+}
+
+
+
 void ServoShield::reset_marker(float theta) {
     quat_t quat{};
     Utils::eulerToQuaternion(theta, 0, 0, &quat);
