@@ -118,7 +118,7 @@ void MqttController::streamObservations() {
 
         Utils::quaternionToEuler(d->sensordata[0], d->sensordata[1], d->sensordata[2], d->sensordata[3], &ypr, false);
         char cmd[150] = "";
-        sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+        sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d,%d,%d,%d,%d", //,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f
                 time_delta,
                 // std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
                 0L,
@@ -128,21 +128,26 @@ void MqttController::streamObservations() {
                 0, // voltage
                 current, // current
 
+
+                // knee_back_left, thigh_back_left
                 servoShield->get_position(0),
                 servoShield->get_position(1),
 
+                // knee_back_right, thigh_back_right
                 servoShield->get_position(4),
                 servoShield->get_position(5),
 
+                // knee_front_right, thigh_front_right
                 servoShield->get_position(8),
                 servoShield->get_position(9),
 
+                //knee_front_left, thigh_front_left
                 servoShield->get_position(12),
-                servoShield->get_position(13),
+                servoShield->get_position(13)
 
                 // torque sensors knee-fl, thigh-fl, knee-fr, thigh-fr, knee-bl, thigh-bl, knee-br, thigh-br
-                d->sensordata[7], d->sensordata[8], d->sensordata[9], d->sensordata[10],
-                d->sensordata[11], d->sensordata[12], d->sensordata[13], d->sensordata[14]
+                //d->sensordata[7], d->sensordata[8], d->sensordata[9], d->sensordata[10],
+                //d->sensordata[11], d->sensordata[12], d->sensordata[13], d->sensordata[14]
         );
 
         try {
@@ -159,10 +164,10 @@ void MqttController::streamObservations() {
                 .distance = 0,
                 .yaw = ypr.yaw, .pitch = ypr.pitch, .roll = ypr.roll,
                 .voltage = 0, .current = current,
-                .position_knee_front_left = servoShield->get_position(0), .position_thigh_front_left = servoShield->get_position(1),
-                .position_knee_front_right = servoShield->get_position(4), .position_thigh_front_right = servoShield->get_position(5),
-                .position_knee_back_left = servoShield->get_position(8), .position_thigh_back_left = servoShield->get_position(9),
-                .position_knee_back_right = servoShield->get_position(12), .position_thigh_back_right = servoShield->get_position(13),
+                .position_knee_front_left = servoShield->get_position(12), .position_thigh_front_left = servoShield->get_position(13),
+                .position_knee_front_right = servoShield->get_position(8), .position_thigh_front_right = servoShield->get_position(9),
+                .position_knee_back_left = servoShield->get_position(0), .position_thigh_back_left = servoShield->get_position(1),
+                .position_knee_back_right = servoShield->get_position(4), .position_thigh_back_right = servoShield->get_position(5),
         };
         mqtt::message_ptr bin_msg = mqtt::make_message(OBS_TOPIC + "BIN", &obs, sizeof(obs));
         client->publish(bin_msg);
