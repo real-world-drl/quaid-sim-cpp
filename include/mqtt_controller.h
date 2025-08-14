@@ -95,6 +95,11 @@ struct StateObservations {
     int16_t position_knee_back_right;
     int16_t position_thigh_back_right;
 
+    float current_front_left;
+    float current_front_right;
+    float current_back_left;
+    float current_back_right;
+
 } __attribute__((packed));
 
 typedef struct {
