@@ -36,7 +36,7 @@
         <mesh file="bottom_link.stl" scale="0.01 0.01 0.01" />
         <mesh file="fuselage.stl" scale="0.01 0.01 0.01" />
 
-        <mesh file="../scene/scene_incline.stl" scale="0.02 0.02 0.01" />
+        <mesh file="../scene/scene_incline.stl" scale="0.02 0.04 0.01" />
     </asset>
 
     <default>
