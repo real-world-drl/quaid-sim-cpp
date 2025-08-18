@@ -9,9 +9,11 @@ This also facilitates a more realistic evaluation of the quantization experiment
 ### Building
 Install prereqs:
 
-    sudo apt install libyaml-cpp-dev libglfw3-dev
+    sudo apt install libyaml-cpp-dev libglfw3-dev libssl-dev
 
-Download MuJoCo binaries from [here](https://github.com/deepmind/mujoco/releases) (tested with version 2.3.1), untar and update the location in the [CMakeLists.txt](CMakeLists.txt).
+Download MuJoCo binaries from [here](https://github.com/deepmind/mujoco/releases) (tested with versions up to 3.3.5), untar and update the location in the [CMakeLists.txt](CMakeLists.txt).
+
+Install Paho MQTT C++ client: [follow the instructions here](https://github.com/eclipse-paho/paho.mqtt.cpp).
 
 To build:
 
@@ -29,8 +31,9 @@ Eclipse Mosquitto is one of the most popular MQTT brokers. MQTT, or Message Queu
     
     sudo apt install mosquitto mosquitto-clients
 
-To enable anonymous access, add this line:
+To enable anonymous access, add these lines:
 
+    listener 1883
     allow_anonymous true
 
 at the end of the config file `/etc/mosquitto/mosquitto.conf`.
