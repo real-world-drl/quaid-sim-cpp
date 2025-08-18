@@ -12,7 +12,7 @@ link_directories(~/install/mujoco/mujoco-3.3.0/lib/)
 find_package(yaml-cpp REQUIRED)
 
 find_package(glfw3 REQUIRED)
-find_package(paho-mqtt-cpp REQUIRED)
+find_package(PahoMqttCpp REQUIRED)
 
 add_executable(quaid_sim_cpp src/main.cpp include/quaid_controller.h src/quaid_controller.cpp include/mqtt_controller.h src/mqtt_controller.cpp include/servo_shield.h src/servo_shield.cpp include/utils.h src/utils.cpp include/settings.h src/settings.cpp)
 target_link_libraries(quaid_sim_cpp libmujoco.so libglfw.so  libpaho-mqttpp3.so libpaho-mqtt3as.so  yaml-cpp)
