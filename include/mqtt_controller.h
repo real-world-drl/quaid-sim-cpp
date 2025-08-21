@@ -103,7 +103,7 @@ struct StateObservations {
 } __attribute__((packed));
 
 typedef struct {
-    uint8_t header;
+    uint8_t header = 0x0E;
     bool degrees;
     uint8_t rigid_body_no;
 

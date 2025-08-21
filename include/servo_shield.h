@@ -59,7 +59,7 @@ public:
 
     void set_sensor_noise(std::string payload);
 
-    void reset_camera();
+    void reset_camera(float theta);
 
 
 protected:

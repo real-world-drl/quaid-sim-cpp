@@ -14,48 +14,48 @@ ServoShield::ServoShield(mjModel* m, mjData *d,mjvCamera *cam, std::shared_ptr<M
 }
 
 void ServoShield::center_servos() {
-  for (int run = 0; run < 15; ++run) {
-    for (int servo = 0; servo < 15; ++servo) {
-      set_position_with_filter(limits[servo].center, servo);
+    for (int run = 0; run < 15; ++run) {
+        for (int servo = 0; servo < 15; ++servo) {
+            set_position_with_filter(limits[servo].center, servo);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-  }
 }
 
 void ServoShield::stand_up() {
-  std::cout << "Stand up on thread " << std::this_thread::get_id() << std::endl;
-  for (int run = 0; run < 15; ++run) {
-    for (int servo = 0; servo < 15; ++servo) {
-      set_position_with_filter(limits[servo].up, servo);
+    std::cout << "Stand up on thread " << std::this_thread::get_id() << std::endl;
+    for (int run = 0; run < 15; ++run) {
+        for (int servo = 0; servo < 15; ++servo) {
+            set_position_with_filter(limits[servo].up, servo);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(150));
-  }
 }
 
 void ServoShield::set_action(float const &new_position_cmd, int const &servonum) {
-  int position = Utils::map(
-      new_position_cmd * 1000, -1000.0, 1000.0,
-      limits[servonum].min, limits[servonum].max
-  );
-  set_position_with_filter(position, servonum);
+    int position = Utils::map(
+            new_position_cmd * 1000, -1000.0, 1000.0,
+            limits[servonum].min, limits[servonum].max
+    );
+    set_position_with_filter(position, servonum);
 }
 
 void ServoShield::set_position(int const &new_position, int const &servonum) {
-  if (new_position <= limits[servonum].min) {
-    positions[servonum] = limits[servonum].min;
-  } else if (new_position >= limits[servonum].max) {
-    positions[servonum] = limits[servonum].max;
-  } else {
-    positions[servonum] = new_position;
-  }
+    if (new_position <= limits[servonum].min) {
+        positions[servonum] = limits[servonum].min;
+    } else if (new_position >= limits[servonum].max) {
+        positions[servonum] = limits[servonum].max;
+    } else {
+        positions[servonum] = new_position;
+    }
 
-  apply_matching_servo_limits(servonum);
+    apply_matching_servo_limits(servonum);
 
-  write_to_servo(servonum);
+    write_to_servo(servonum);
 }
 
 int16_t ServoShield::get_position(const int &servonum) {
-  return (int16_t) positions[servonum];
+    return (int16_t) positions[servonum];
 }
 
 void ServoShield::apply_matching_servo_limits(int const &servonum) {
@@ -63,82 +63,82 @@ void ServoShield::apply_matching_servo_limits(int const &servonum) {
         return;
     }
 
-  int matching_servo = -1;
-  if (servonum == 0 || servonum == 4 || servonum == 8 || servonum == 12) {
-    matching_servo = servonum + 1;
-  } else if (servonum == 1 || servonum == 5 || servonum == 9 || servonum == 13) {
-    matching_servo = servonum - 1;
-  }
+    int matching_servo = -1;
+    if (servonum == 0 || servonum == 4 || servonum == 8 || servonum == 12) {
+        matching_servo = servonum + 1;
+    } else if (servonum == 1 || servonum == 5 || servonum == 9 || servonum == 13) {
+        matching_servo = servonum - 1;
+    }
 
-  if (matching_servo == -1) {
-    return;
-  }
+    if (matching_servo == -1) {
+        return;
+    }
 
-  int diff = positions[matching_servo] - positions[servonum];
+    int diff = positions[matching_servo] - positions[servonum];
 //  char msg[200] = "";
 //    sprintf(msg, "Servo: %d, matching servo %d, servo value: %d, matching servo value: %d, diff: %d",
 //            servonum, matching_servo, positions[servonum], positions[matching_servo], diff);
 //  std::cout << msg << std::endl;
 
-  if (diff > settings->matching_servo_limits) {
-    positions[servonum] = positions[matching_servo] - settings->matching_servo_limits;
+    if (diff > settings->matching_servo_limits) {
+        positions[servonum] = positions[matching_servo] - settings->matching_servo_limits;
 //      Serial.print("Diff more than MAX adjusting value to ");
 //      Serial.println(positions[servonum]);
-  } else if (diff < -settings->matching_servo_limits) {
-    positions[servonum] = positions[matching_servo] + settings->matching_servo_limits;
+    } else if (diff < -settings->matching_servo_limits) {
+        positions[servonum] = positions[matching_servo] + settings->matching_servo_limits;
 //      Serial.print("Diff less than MAX adjusting value to ");
 //      Serial.println(positions[servonum]);
-  }
+    }
 }
 
 void ServoShield::move_servos(std::string readline, bool use_set_action) {
-  std::vector<float> vect = Utils::parse_csv(std::move(readline));
+    std::vector<float> vect = Utils::parse_csv(std::move(readline));
 
-  for (size_t servoNum = 0; servoNum < vect.size(); ++ servoNum) {
-    if (use_set_action) {
-      set_action(vect[servoNum], servoNum);
-    } else {
-      set_position(vect[servoNum], servoNum);
+    for (size_t servoNum = 0; servoNum < vect.size(); ++ servoNum) {
+        if (use_set_action) {
+            set_action(vect[servoNum], servoNum);
+        } else {
+            set_position(vect[servoNum], servoNum);
+        }
+        if (servoNum == 15) {
+            break;
+        }
     }
-    if (servoNum == 15) {
-      break;
-    }
-  }
 }
 
 void ServoShield::set_position_with_filter(const int &new_position_cmd, const int &servonum) {
-  int old_position = positions[servonum];
-  int new_position = old_position * EXP_FILTER_C + new_position_cmd * (1.0 - EXP_FILTER_C);
-  if (new_position <= limits[servonum].min) {
-    positions[servonum] = limits[servonum].min;
-  } else if (new_position >= limits[servonum].max) {
-    positions[servonum] = limits[servonum].max;
-  } else {
-    positions[servonum] = new_position;
-  }
+    int old_position = positions[servonum];
+    int new_position = old_position * EXP_FILTER_C + new_position_cmd * (1.0 - EXP_FILTER_C);
+    if (new_position <= limits[servonum].min) {
+        positions[servonum] = limits[servonum].min;
+    } else if (new_position >= limits[servonum].max) {
+        positions[servonum] = limits[servonum].max;
+    } else {
+        positions[servonum] = new_position;
+    }
 
 //    char msg[100] = "";
 //    sprintf(msg, "Setting servo %d mapped to %d to filtered value %d (original value %d)",
 //            servonum, servo_mapping[servonum], positions[servonum], new_position_cmd);
 //    std::cout << msg << std::endl;
-  apply_matching_servo_limits(servonum);
+    apply_matching_servo_limits(servonum);
 
-  write_to_servo(servonum);
+    write_to_servo(servonum);
 }
 
 void ServoShield::write_to_servo(const int &servonum) {
-  int mapped_servo = servo_mapping[servonum];
-  if (mapped_servo < 100) {
-    //  pwm.setPWM(servo_mapping[servonum], 0, positions[servonum] + offsets[servonum]);
-    float mapped_position = Utils::map(positions[servonum], limits[servonum].min, limits[servonum].max,
-                                limits[servonum].control_min, limits[servonum].control_max);
-    d->ctrl[mapped_servo] = mapped_position;
-    /* * /
-     std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
-              << mapped_position << " mapped from " << positions[servonum] << std::endl;
-  / * */
-    //reset_camera();
-  }
+    int mapped_servo = servo_mapping[servonum];
+    if (mapped_servo < 100) {
+        //  pwm.setPWM(servo_mapping[servonum], 0, positions[servonum] + offsets[servonum]);
+        float mapped_position = Utils::map(positions[servonum], limits[servonum].min, limits[servonum].max,
+                                           limits[servonum].control_min, limits[servonum].control_max);
+        d->ctrl[mapped_servo] = mapped_position;
+        /* * /
+         std::cout << "Setting position of " << servonum << " mapped to " << servo_mapping[servonum] << " to "
+                  << mapped_position << " mapped from " << positions[servonum] << std::endl;
+      / * */
+        //reset_camera();
+    }
 }
 
 
@@ -185,32 +185,33 @@ void ServoShield::reset_marker(float theta) {
 }
 
 void ServoShield::move_marker(std::string readline) {
-  std::vector<float> pos_orient = Utils::parse_csv(std::move(readline));
+    std::vector<float> pos_orient = Utils::parse_csv(std::move(readline));
 
-  d->mocap_pos[3] = pos_orient[0];
-  d->mocap_pos[4] = pos_orient[1];
-  d->mocap_pos[5] = pos_orient[2];
+    d->mocap_pos[3] = pos_orient[0];
+    d->mocap_pos[4] = pos_orient[1];
+    d->mocap_pos[5] = pos_orient[2];
 
-  d->mocap_quat[4] = pos_orient[3];
-  d->mocap_quat[5] = pos_orient[4];
-  d->mocap_quat[6] = pos_orient[5];
-  d->mocap_quat[7] = pos_orient[6];
+    d->mocap_quat[4] = pos_orient[3];
+    d->mocap_quat[5] = pos_orient[4];
+    d->mocap_quat[6] = pos_orient[5];
+    d->mocap_quat[7] = pos_orient[6];
 }
 
-void ServoShield::reset_camera() {
-  cam->distance = 5;
-  cam->azimuth = 45;
-  cam->elevation = -20;
-  cam->lookat[0] = d->sensordata[4];
-  cam->lookat[1] = d->sensordata[5];
-  cam->lookat[2] = d->sensordata[6];
+void ServoShield::reset_camera(float theta) {
+    cam->distance = 5;
+    cam->azimuth = theta;
+    cam->elevation = -30;
+    cam->trackbodyid = 1;
+    cam->lookat[0] = d->sensordata[4];
+    cam->lookat[1] = d->sensordata[5];
+    cam->lookat[2] = d->sensordata[6];
 }
 
 void ServoShield::set_sensor_noise(std::string payload) {
-  std::cout << "Setting sensor noise to " << payload << " This was deprecated in 3.14 and doesn't work anymore!!!\nYou need to provide your own noise" << std::endl;
-  std::vector<float> vect = Utils::parse_csv(std::move(payload));
+    std::cout << "Setting sensor noise to " << payload << " This was deprecated in 3.14 and doesn't work anymore!!!\nYou need to provide your own noise" << std::endl;
+    std::vector<float> vect = Utils::parse_csv(std::move(payload));
 
-  for (uint i = 0; i < vect.size() && i < (uint) m->nsensor; ++i) {
-    m->sensor_noise[i] = vect[i];
-  }
+    for (uint i = 0; i < vect.size() && i < (uint) m->nsensor; ++i) {
+        m->sensor_noise[i] = vect[i];
+    }
 }

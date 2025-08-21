@@ -69,10 +69,11 @@ bool MqttController::readDataPacket(std::string payload) {
 
         case 'p':
             if (payload.substr(1, 2) == "TH") {
-                servoShield->reset_marker(atof(payload.substr(3).c_str()) / RAD_TO_DEG);
+                float theta = atof(payload.substr(3).c_str()) / RAD_TO_DEG;
+                servoShield->reset_marker(theta);
                 // reset inclined plane
-                servoShield->reset_body(2, atof(payload.substr(3).c_str()) / RAD_TO_DEG);
-                servoShield->reset_camera();
+                servoShield->reset_body(2, theta);
+                servoShield->reset_camera(theta * RAD_TO_DEG);
             }
             break;
 
@@ -80,7 +81,7 @@ bool MqttController::readDataPacket(std::string payload) {
             servoShield->move_marker(payload);
             break;
         case 'w':
-            servoShield->reset_camera();
+            servoShield->reset_camera(45.0);
             break;
 
         default: break; // keep the current course
