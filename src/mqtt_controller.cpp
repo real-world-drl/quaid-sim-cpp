@@ -136,12 +136,20 @@ void MqttController::streamObservations() {
                 .current_front_right = current_front_right,
                 .current_back_left = current_back_left,
                 .current_back_right = current_back_right,
+
+                .acc_x = (float) d->sensordata[15],
+                .acc_y = (float) d->sensordata[16],
+                .acc_z = (float) d->sensordata[17],
+
+                .gyro_x = (float) d->sensordata[18],
+                .gyro_y = (float) d->sensordata[19],
+                .gyro_z = (float) d->sensordata[20],
         };
         mqtt::message_ptr bin_msg = mqtt::make_message(OBS_TOPIC + "BIN", &obs, sizeof(obs));
         client->publish(bin_msg);
 
         char cmd[150] = "";
-        sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%.2f,%.2f,%.2f,%.2f", //,,%.2f,%.2f,%.2f,%.2f
+        sprintf(cmd, "S%ld,%ld,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%d,%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
                 time_delta,
                 // std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count(), // distance
                 0L,
@@ -171,7 +179,9 @@ void MqttController::streamObservations() {
                 current_front_left,
                 current_front_right,
                 current_back_left,
-                current_back_right
+                current_back_right,
+
+                obs.acc_z, obs.acc_y, obs.acc_x
         );
 
         try {

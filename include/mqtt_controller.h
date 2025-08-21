@@ -100,6 +100,9 @@ struct StateObservations {
     float current_back_left;
     float current_back_right;
 
+    float acc_x, acc_y, acc_z;
+    float gyro_x, gyro_y, gyro_z;
+
 } __attribute__((packed));
 
 typedef struct {
