@@ -234,13 +234,13 @@
         </body>
         -->
 
-        <!-- -- >
+        <!-- - ->
         <body name="incline" pos="0 0 -0.50" euler="0 0 0" mocap="true">
             <geom name="incline" type="mesh" mesh="scene_incline" pos="-4 0 0"  conaffinity="1" condim="3" material="light-wood-mat" />
         </body>
         <!- - -->
         <body name="incline" pos="0 0 -0.50" euler="0 0 0" mocap="true">
-            <geom name="incline" type="mesh" mesh="incline_uneven" pos="6 3 0"  conaffinity="1" condim="3" material="light-wood-mat" />
+            <geom name="incline" type="mesh" mesh="incline_uneven" pos="9 3 0"  conaffinity="1" condim="3" material="light-wood-mat" />
         </body>
         <!-- -->
 
