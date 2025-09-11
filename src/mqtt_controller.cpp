@@ -16,6 +16,7 @@ void MqttController::init(std::shared_ptr<MqttSettings> settings, mjModel* m, mj
     OBS_TOPIC = (OBS_TOPIC_BASE + this->settings->mqtt_queue_no);
     OBS_MOCAP_TOPIC = (OBS_MOCAP_TOPIC_BASE + this->settings->mqtt_queue_no);
     ACT_TOPIC = (ACT_TOPIC_BASE + this->settings->mqtt_queue_no);
+    CTRL_TOPIC = (CTRL_TOPIC_BASE + this->settings->mqtt_queue_no);
 
     client = std::make_shared<mqtt::async_client>(this->settings->mqtt_server_ip, CLIENT_ID, PERSIST_DIR);
     servoShield = std::make_shared<ServoShield>(m, d, cam, settings);
@@ -268,6 +269,7 @@ bool MqttController::connect() {
     conntok->wait();
     std::cout << "  ...OK" << std::endl;
     client->subscribe(ACT_TOPIC, QOS);
+    client->subscribe(CTRL_TOPIC, QOS);
 
     std::cout << "Subscribed to " << ACT_TOPIC << std::endl;
 

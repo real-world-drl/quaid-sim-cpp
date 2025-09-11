@@ -50,6 +50,7 @@ protected:
 
   const std::string ACT_TOPIC_BASE { "quaid/act/r" };
   const std::string OBS_TOPIC_BASE { "quaid/obs/r" };
+  const std::string CTRL_TOPIC_BASE { "quaid/ctrl/r" };
   const std::string OBS_MOCAP_TOPIC_BASE { "quaid/mocap/r" };
 
   const std::string CLIENT_ID_BASE {"QuaidSimulator"};
@@ -57,6 +58,7 @@ protected:
 
   std::string ACT_TOPIC;
   std::string OBS_TOPIC;
+  std::string CTRL_TOPIC;
   std::string OBS_MOCAP_TOPIC;
   std::string CLIENT_ID;
 
