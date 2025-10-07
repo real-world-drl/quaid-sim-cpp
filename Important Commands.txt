@@ -1,0 +1,8 @@
+How to build the quaid-sim-cpp repo:
+mkdir build
+cd build
+cmake .. -G "Ninja" `  -DCMAKE_C_COMPILER=clang ` -DCMAKE_CXX_COMPILER=clang++ `  -DCMAKE_BUILD_TYPE=Release ` -DCMAKE_TOOLCHAIN_FILE="C:/Users/Mathew/Desktop/Quaid_Sim/vcpkg/scripts/buildsystems/vcpkg.cmake"
+cmake --build . --config Release
+
+If want headless version run this instead: 
+cmake --build . --target quaid_sim_headless --config Release

@@ -1,6 +1,6 @@
 mqtt:
   mqtt_queue_no: 100
-  mqtt_server_ip: mqtt-server
+  mqtt_server_ip: 172.29.36.151
 
 sim:
   obs_streaming_delay: 15
