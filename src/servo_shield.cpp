@@ -198,10 +198,11 @@ void ServoShield::move_marker(std::string readline) {
 }
 
 void ServoShield::reset_camera(float theta) {
-    cam->distance = 5;
+    cam->distance = 12;
     cam->azimuth = theta;
-    cam->elevation = -30;
+    cam->elevation = -20;
     cam->trackbodyid = 1;
+    /* I don't know why 4, 5, 6 are the right coordinates for the camera but it works */
     cam->lookat[0] = d->sensordata[4];
     cam->lookat[1] = d->sensordata[5];
     cam->lookat[2] = d->sensordata[6];

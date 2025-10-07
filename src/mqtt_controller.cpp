@@ -75,6 +75,7 @@ bool MqttController::readDataPacket(std::string payload) {
                 // reset inclined plane
                 servoShield->reset_body(2, theta);
                 servoShield->reset_camera(theta * RAD_TO_DEG);
+//                servoShield->reset_camera(90);
             }
             break;
 
