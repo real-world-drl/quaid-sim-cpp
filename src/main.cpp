@@ -163,7 +163,6 @@ int main(int argc, const char** argv) {
     glfwSetScrollCallback(window, scroll);
 
     controller->setup_camera(cam);
-
 //  mjcb_control = QuaidController::controller;
 
     // run main loop, target real-time simulation and 60 fps rendering
@@ -175,6 +174,20 @@ int main(int argc, const char** argv) {
         mjtNum simstart = d->time;
         while (d->time - simstart < 1.0/60.0) {
             mj_step(m, d);
+        }
+
+        if (controller->isResetting()) {
+            std::cout << "Resetting simulation..." << std::endl;
+//            stopStreamingObservations();
+//            stopStreamingMocapData();
+//            std::this_thread::sleep_for(std::chrono::milliseconds(settings->streamingDelay * 10));
+            mj_resetData(m, d);
+             mj_forward(m, d); // it was in the sample reset method - but it causes issues ERROR: mju_makeFrame: xaxis of contact frame undefined
+//            std::this_thread::sleep_for(std::chrono::milliseconds(settings->streamingDelay * 10));
+//            servoShield->reset_camera(45.0);
+//            startStreamingObservations();
+//            startStreamingMocapData();
+            controller->finishResetting();
         }
 
         // get framebuffer viewport

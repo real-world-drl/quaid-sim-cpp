@@ -77,17 +77,7 @@ bool MqttController::readDataPacket(std::string payload) {
             }
             break;
         case 's':
-            std::cout << "Resetting simulation..." << std::endl;
-            stopStreamingObservations();
-            stopStreamingMocapData();
-
-            mj_resetData(m, d);
-            mj_forward(m, d);
-            std::this_thread::sleep_for(std::chrono::milliseconds(settings->streamingDelay));
-            servoShield->reset_camera(45.0);
-            startStreamingObservations();
-            startStreamingMocapData();
-
+            this->isResetting = true;
             break;
         case 'q':
             servoShield->move_marker(payload);

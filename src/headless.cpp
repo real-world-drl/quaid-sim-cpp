@@ -57,6 +57,13 @@ int main(int argc, const char** argv) {
         while (d->time - simstart < 1.0 / 60.0) {
             mj_step(m, d);
         }
+
+        if (controller->isResetting()) {
+            mj_resetData(m, d);
+            mj_forward(m, d); // it was in the sample reset method - but it causes issues ERROR: mju_makeFrame: xaxis of contact frame undefined
+            controller->finishResetting();
+        }
+
         // without this it doesn't train and any trained policies will perform poorly
         // I guess there is some delay from rendering in the full mode - 10ms seems to work
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
