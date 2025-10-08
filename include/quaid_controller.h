@@ -13,8 +13,6 @@
 class QuaidController {
 protected:
     std::shared_ptr<MqttController> mqtt;
-    mjModel* m;
-    mjData* d;
     std::shared_ptr<MqttSettings> settings;;
 
 public:
@@ -31,6 +29,8 @@ public:
 
     bool isResetting();
     void finishResetting();
+
+    void initModel();
 
 };
 

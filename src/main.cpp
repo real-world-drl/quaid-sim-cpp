@@ -40,176 +40,170 @@ double lasty = 0;
 
 // keyboard callback
 void keyboard(GLFWwindow* window, int key, int scancode, int act, int mods) {
-  // backspace: reset simulation
-  if (act==GLFW_PRESS && key==GLFW_KEY_BACKSPACE) {
-    mj_resetData(m, d);
-    mj_forward(m, d);
-  }
+    // backspace: reset simulation
+    if (act==GLFW_PRESS && key==GLFW_KEY_BACKSPACE) {
+        mj_resetData(m, d);
+        mj_forward(m, d);
+    }
 }
 
 
 // mouse button callback
 void mouse_button(GLFWwindow* window, int button, int act, int mods) {
-  // update button state
-  button_left = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT)==GLFW_PRESS);
-  button_middle = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE)==GLFW_PRESS);
-  button_right = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT)==GLFW_PRESS);
+    // update button state
+    button_left = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT)==GLFW_PRESS);
+    button_middle = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE)==GLFW_PRESS);
+    button_right = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT)==GLFW_PRESS);
 
-  // update mouse position
-  glfwGetCursorPos(window, &lastx, &lasty);
+    // update mouse position
+    glfwGetCursorPos(window, &lastx, &lasty);
 }
 
 
 // mouse move callback
 void mouse_move(GLFWwindow* window, double xpos, double ypos) {
-  // no buttons down: nothing to do
-  if (!button_left && !button_middle && !button_right) {
-    return;
-  }
+    // no buttons down: nothing to do
+    if (!button_left && !button_middle && !button_right) {
+        return;
+    }
 
-  // compute mouse displacement, save
-  double dx = xpos - lastx;
-  double dy = ypos - lasty;
-  lastx = xpos;
-  lasty = ypos;
+    // compute mouse displacement, save
+    double dx = xpos - lastx;
+    double dy = ypos - lasty;
+    lastx = xpos;
+    lasty = ypos;
 
-  // get current window size
-  int width, height;
-  glfwGetWindowSize(window, &width, &height);
+    // get current window size
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
 
-  // get shift key state
-  bool mod_shift = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS ||
-                    glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)==GLFW_PRESS);
+    // get shift key state
+    bool mod_shift = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS ||
+                      glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)==GLFW_PRESS);
 
-  // determine action based on mouse button
-  mjtMouse action;
-  if (button_right) {
-    action = mod_shift ? mjMOUSE_MOVE_H : mjMOUSE_MOVE_V;
-  } else if (button_left) {
-    action = mod_shift ? mjMOUSE_ROTATE_H : mjMOUSE_ROTATE_V;
-  } else {
-    action = mjMOUSE_ZOOM;
-  }
+    // determine action based on mouse button
+    mjtMouse action;
+    if (button_right) {
+        action = mod_shift ? mjMOUSE_MOVE_H : mjMOUSE_MOVE_V;
+    } else if (button_left) {
+        action = mod_shift ? mjMOUSE_ROTATE_H : mjMOUSE_ROTATE_V;
+    } else {
+        action = mjMOUSE_ZOOM;
+    }
 
-  // move camera
-  mjv_moveCamera(m, action, dx/height, dy/height, &scn, &cam);
+    // move camera
+    mjv_moveCamera(m, action, dx/height, dy/height, &scn, &cam);
 }
 
 
 // scroll callback
 void scroll(GLFWwindow* window, double xoffset, double yoffset) {
-  // emulate vertical mouse motion = 5% of window height
-  mjv_moveCamera(m, mjMOUSE_ZOOM, 0, -0.05*yoffset, &scn, &cam);
+    // emulate vertical mouse motion = 5% of window height
+    mjv_moveCamera(m, mjMOUSE_ZOOM, 0, -0.05*yoffset, &scn, &cam);
 }
 
 
 // main function
 int main(int argc, const char** argv) {
-  std::string model_file = "";
-  std::string config_file = "../config/settings.yaml";
-  std::string mqtt_queue_no = "-1";
+    std::string model_file = "";
+    std::string config_file = "../config/settings.yaml";
+    std::string mqtt_queue_no = "-1";
 
-  CLI::App app{"Quaid-SIM"};
-  app.add_option("-m,--model", model_file, "MuJoCo model file path (defaults based on version set in the settings file)");
-  app.add_option("-c,--config", config_file, "Config file path (defaults to ../config/settings.yaml)");
-  app.add_option("-q,--mqtt_queue_no", mqtt_queue_no, "MQTT queue no (defaults to the one in config file)");
+    CLI::App app{"Quaid-SIM"};
+    app.add_option("-m,--model", model_file, "MuJoCo model file path (defaults based on version set in the settings file)");
+    app.add_option("-c,--config", config_file, "Config file path (defaults to ../config/settings.yaml)");
+    app.add_option("-q,--mqtt_queue_no", mqtt_queue_no, "MQTT queue no (defaults to the one in config file)");
 
-  CLI11_PARSE(app, argc, argv);
+    CLI11_PARSE(app, argc, argv);
 
-  std::shared_ptr<MqttSettings> settings = std::make_shared<MqttSettings>(config_file);
+    std::shared_ptr<MqttSettings> settings = std::make_shared<MqttSettings>(config_file);
+    settings->setModelFile(model_file);
 
-  if (model_file.empty()) {
-      if (settings->version == 1) {
-          model_file = "../assets/quaid.xml";
-      } else {
-          model_file = "../assets/v2/quaid_v2.xml";
-      }
-  }
+    // load and compile model
+    std::cout << "Loading model: " << settings->model_file << std::endl;
+    char error[1000] = "Could not load binary model";
+    if (settings->model_file.find(".mjb") != std::string::npos) {
+        m = mj_loadModel(settings->model_file.c_str(), 0);
+    } else {
+        m = mj_loadXML(settings->model_file.c_str(), 0, error, 1000);
+    }
+    if (!m) {
+        mju_error_s("Load model error: %s", error);
+    }
 
-  // load and compile model
-  char error[1000] = "Could not load binary model";
-  if (model_file.find(".mjb") != std::string::npos) {
-    m = mj_loadModel(model_file.c_str(), 0);
-  } else {
-    m = mj_loadXML(model_file.c_str(), 0, error, 1000);
-  }
-  if (!m) {
-    mju_error_s("Load model error: %s", error);
-  }
+    // make data
+    d = mj_makeData(m);
 
-  // make data
-  d = mj_makeData(m);
+    std::shared_ptr<QuaidController> controller = std::make_shared<QuaidController>(m, d, settings, &cam, mqtt_queue_no);
 
-  std::shared_ptr<QuaidController> controller = std::make_shared<QuaidController>(m, d, settings, &cam, mqtt_queue_no);
+    // init GLFW
+    if (!glfwInit()) {
+        mju_error("Could not initialize GLFW");
+    }
 
-  // init GLFW
-  if (!glfwInit()) {
-    mju_error("Could not initialize GLFW");
-  }
+    // create window, make OpenGL context current, request v-sync
+    GLFWwindow* window = glfwCreateWindow(1200, 900, ("Quaid-SIM R" + mqtt_queue_no).c_str(), NULL, NULL);
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
 
-  // create window, make OpenGL context current, request v-sync
-  GLFWwindow* window = glfwCreateWindow(1200, 900, ("Quaid-SIM R" + mqtt_queue_no).c_str(), NULL, NULL);
-  glfwMakeContextCurrent(window);
-  glfwSwapInterval(1);
+    // initialize visualization data structures
+    mjv_defaultCamera(&cam);
+    mjv_defaultOption(&opt);
+    mjv_defaultScene(&scn);
+    mjr_defaultContext(&con);
 
-  // initialize visualization data structures
-  mjv_defaultCamera(&cam);
-  mjv_defaultOption(&opt);
-  mjv_defaultScene(&scn);
-  mjr_defaultContext(&con);
+    // create scene and context
+    mjv_makeScene(m, &scn, 2000);
+    mjr_makeContext(m, &con, mjFONTSCALE_150);
 
-  // create scene and context
-  mjv_makeScene(m, &scn, 2000);
-  mjr_makeContext(m, &con, mjFONTSCALE_150);
+    // install GLFW mouse and keyboard callbacks
+    glfwSetKeyCallback(window, keyboard);
+    glfwSetCursorPosCallback(window, mouse_move);
+    glfwSetMouseButtonCallback(window, mouse_button);
+    glfwSetScrollCallback(window, scroll);
 
-  // install GLFW mouse and keyboard callbacks
-  glfwSetKeyCallback(window, keyboard);
-  glfwSetCursorPosCallback(window, mouse_move);
-  glfwSetMouseButtonCallback(window, mouse_button);
-  glfwSetScrollCallback(window, scroll);
-
-  controller->setup_camera(cam);
+    controller->setup_camera(cam);
 
 //  mjcb_control = QuaidController::controller;
 
-  // run main loop, target real-time simulation and 60 fps rendering
-  while (!glfwWindowShouldClose(window)) {
-    // advance interactive simulation for 1/60 sec
-    //  Assuming MuJoCo can simulate faster than real-time, which it usually can,
-    //  this loop will finish on time for the next frame to be rendered at 60 fps.
-    //  Otherwise add a cpu timer and exit this loop when it is time to render.
-    mjtNum simstart = d->time;
-    while (d->time - simstart < 1.0/60.0) {
-      mj_step(m, d);
+    // run main loop, target real-time simulation and 60 fps rendering
+    while (!glfwWindowShouldClose(window)) {
+        // advance interactive simulation for 1/60 sec
+        //  Assuming MuJoCo can simulate faster than real-time, which it usually can,
+        //  this loop will finish on time for the next frame to be rendered at 60 fps.
+        //  Otherwise add a cpu timer and exit this loop when it is time to render.
+        mjtNum simstart = d->time;
+        while (d->time - simstart < 1.0/60.0) {
+            mj_step(m, d);
+        }
+
+        // get framebuffer viewport
+        mjrRect viewport = {0, 0, 0, 0};
+        glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
+
+        // update scene and render
+        mjv_updateScene(m, d, &opt, NULL, &cam, mjCAT_ALL, &scn);
+        mjr_render(viewport, &scn, &con);
+
+        // swap OpenGL buffers (blocking call due to v-sync)
+        glfwSwapBuffers(window);
+
+        // process pending GUI events, call GLFW callbacks
+        glfwPollEvents();
     }
 
-    // get framebuffer viewport
-    mjrRect viewport = {0, 0, 0, 0};
-    glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
+    //free visualization storage
+    mjv_freeScene(&scn);
+    mjr_freeContext(&con);
 
-    // update scene and render
-    mjv_updateScene(m, d, &opt, NULL, &cam, mjCAT_ALL, &scn);
-    mjr_render(viewport, &scn, &con);
+    // free MuJoCo model and data
+    mj_deleteData(d);
+    mj_deleteModel(m);
 
-    // swap OpenGL buffers (blocking call due to v-sync)
-    glfwSwapBuffers(window);
-
-    // process pending GUI events, call GLFW callbacks
-    glfwPollEvents();
-  }
-
-  //free visualization storage
-  mjv_freeScene(&scn);
-  mjr_freeContext(&con);
-
-  // free MuJoCo model and data
-  mj_deleteData(d);
-  mj_deleteModel(m);
-
-  // terminate GLFW (crashes with Linux NVidia drivers)
+    // terminate GLFW (crashes with Linux NVidia drivers)
 #if defined(__APPLE__) || defined(_WIN32)
-  glfwTerminate();
+    glfwTerminate();
 #endif
 
-  return 1;
+    return 1;
 }

@@ -46,3 +46,15 @@ void MqttSettings::parse(const std::string &path) {
       matching_servo_limits = config["robot"]["matching_servo_limits"].as<int>();
   }
 }
+
+void MqttSettings::setModelFile(const std::string &path) {
+    if (path.empty()) {
+        if (this->version == 1) {
+            this->model_file = "../assets/quaid.xml";
+        } else {
+            this->model_file = "../assets/v2/quaid_v2.xml";
+        }
+    } else {
+        this->model_file = path;
+    }
+}

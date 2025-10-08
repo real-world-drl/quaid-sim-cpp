@@ -32,22 +32,16 @@ int main(int argc, const char** argv) {
 
     CLI11_PARSE(app, argc, argv);
 
-    std::shared_ptr <MqttSettings> settings = std::make_shared<MqttSettings>(config_file);
-
-    if (model_file.empty()) {
-        if (settings->version == 1) {
-            model_file = "../assets/quaid.xml";
-        } else {
-            model_file = "../assets/v2/quaid_v2.xml";
-        }
-    }
+    std::shared_ptr<MqttSettings> settings = std::make_shared<MqttSettings>(config_file);
+    settings->setModelFile(model_file);
 
     // load and compile model
+    std::cout << "Loading model: " << settings->model_file << std::endl;
     char error[1000] = "Could not load binary model";
-    if (model_file.find(".mjb") != std::string::npos) {
-        m = mj_loadModel(model_file.c_str(), 0);
+    if (settings->model_file.find(".mjb") != std::string::npos) {
+        m = mj_loadModel(settings->model_file.c_str(), 0);
     } else {
-        m = mj_loadXML(model_file.c_str(), 0, error, 1000);
+        m = mj_loadXML(settings->model_file.c_str(), 0, error, 1000);
     }
     if (!m) {
         mju_error_s("Load model error: %s", error);

@@ -10,11 +10,13 @@ QuaidController::QuaidController(mjModel *m, mjData *d, std::shared_ptr<MqttSett
         settings->mqtt_queue_no = mqtt_queue_no;
     }
 
-    mqtt = std::make_shared<MqttController>(settings, m, d, cam);
-    mqtt->connect();
+    // initModel();
 
-//    m->sensor_noise[0] = settings->rotation_noise;
-//    m->sensor_noise[1] = settings->position_noise;
+    this->mqtt = std::make_shared<MqttController>(settings, m, d, cam);
+    this->mqtt->connect();
+
+    m->sensor_noise[0] = settings->rotation_noise;
+    m->sensor_noise[1] = settings->position_noise;
 }
 
 QuaidController::~QuaidController() {
@@ -34,6 +36,10 @@ bool QuaidController::isResetting() {
 
 void QuaidController::finishResetting() {
     mqtt->isResetting = false;
+}
+
+void QuaidController::initModel() {
+
 }
 
 /*
