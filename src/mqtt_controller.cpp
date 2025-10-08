@@ -8,10 +8,7 @@ MqttController::~MqttController() {
 //  disconnect();
 }
 
-void MqttController::init(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam) {
-    this->settings = settings;
-    this->d = d;
-
+MqttController::MqttController(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam) : m(m), d(d), cam(cam), settings(settings) {
     CLIENT_ID = (CLIENT_ID_BASE + this->settings->mqtt_queue_no);
     OBS_TOPIC = (OBS_TOPIC_BASE + this->settings->mqtt_queue_no);
     OBS_MOCAP_TOPIC = (OBS_MOCAP_TOPIC_BASE + this->settings->mqtt_queue_no);

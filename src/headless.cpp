@@ -56,7 +56,7 @@ int main(int argc, const char** argv) {
     // make data
     d = mj_makeData(m);
 
-    QuaidController::init_controller(m, d, &cam, settings, mqtt_queue_no);
+    std::shared_ptr<QuaidController> controller = std::make_shared<QuaidController>(m, d, settings, &cam, mqtt_queue_no);
 
     while (true) {
         mjtNum simstart = d->time;
@@ -72,7 +72,9 @@ int main(int argc, const char** argv) {
     mj_deleteData(d);
     mj_deleteModel(m);
 
-    QuaidController::disconnect();
-
     return 1;
+}
+
+void run_simulation() {
+
 }

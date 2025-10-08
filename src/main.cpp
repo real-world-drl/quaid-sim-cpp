@@ -140,7 +140,7 @@ int main(int argc, const char** argv) {
   // make data
   d = mj_makeData(m);
 
-  QuaidController::init_controller(m, d, &cam, settings, mqtt_queue_no);
+  std::shared_ptr<QuaidController> controller = std::make_shared<QuaidController>(m, d, settings, &cam, mqtt_queue_no);
 
   // init GLFW
   if (!glfwInit()) {
@@ -168,9 +168,9 @@ int main(int argc, const char** argv) {
   glfwSetMouseButtonCallback(window, mouse_button);
   glfwSetScrollCallback(window, scroll);
 
-  QuaidController::setup_camera(cam);
+  controller->setup_camera(cam);
 
-  mjcb_control = QuaidController::controller;
+//  mjcb_control = QuaidController::controller;
 
   // run main loop, target real-time simulation and 60 fps rendering
   while (!glfwWindowShouldClose(window)) {
@@ -205,8 +205,6 @@ int main(int argc, const char** argv) {
   // free MuJoCo model and data
   mj_deleteData(d);
   mj_deleteModel(m);
-
-  QuaidController::disconnect();
 
   // terminate GLFW (crashes with Linux NVidia drivers)
 #if defined(__APPLE__) || defined(_WIN32)

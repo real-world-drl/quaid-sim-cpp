@@ -21,57 +21,60 @@
 
 class MqttController {
 public:
-  void init(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam);
-  ~MqttController();
+    MqttController(std::shared_ptr<MqttSettings> settings, mjModel* m, mjData* d, mjvCamera* cam);
+    ~MqttController();
 
-  bool connect();
-  void disconnect() const;
+    bool connect();
+    void disconnect() const;
 
-  void reset();
-  void sitDown();
-  void standUp();
+    void reset();
+    void sitDown();
+    void standUp();
 
-  bool readDataPacket(std::string readline);
+    bool readDataPacket(std::string readline);
 
-  void startStreamingMocapData();
-  void stopStreamingMocapData();
+    void startStreamingMocapData();
+    void stopStreamingMocapData();
 
-  void startStreamingObservations();
-  void stopStreamingObservations();
+    void startStreamingObservations();
+    void stopStreamingObservations();
 
-  std::shared_ptr<ServoShield> servoShield;
+    std::shared_ptr<ServoShield> servoShield;
+
+    bool isResetting;
 
 protected:
-  mjModel* m;
-  mjData* d;
+    mjModel* m;
+    mjData* d;
+    mjvCamera* cam;
 
-  std::shared_ptr<MqttSettings> settings;
-  std::shared_ptr<mqtt::async_client> client;
+    std::shared_ptr<MqttSettings> settings;
+    std::shared_ptr<mqtt::async_client> client;
 
-  const std::string ACT_TOPIC_BASE { "quaid/act/r" };
-  const std::string OBS_TOPIC_BASE { "quaid/obs/r" };
-  const std::string CTRL_TOPIC_BASE { "quaid/ctrl/r" };
-  const std::string OBS_MOCAP_TOPIC_BASE { "quaid/mocap/r" };
+    const std::string ACT_TOPIC_BASE { "quaid/act/r" };
+    const std::string OBS_TOPIC_BASE { "quaid/obs/r" };
+    const std::string CTRL_TOPIC_BASE { "quaid/ctrl/r" };
+    const std::string OBS_MOCAP_TOPIC_BASE { "quaid/mocap/r" };
 
-  const std::string CLIENT_ID_BASE {"QuaidSimulator"};
-  const std::string PERSIST_DIR			{ "./persist" };
+    const std::string CLIENT_ID_BASE {"QuaidSimulator"};
+    const std::string PERSIST_DIR			{ "./persist" };
 
-  std::string ACT_TOPIC;
-  std::string OBS_TOPIC;
-  std::string CTRL_TOPIC;
-  std::string OBS_MOCAP_TOPIC;
-  std::string CLIENT_ID;
+    std::string ACT_TOPIC;
+    std::string OBS_TOPIC;
+    std::string CTRL_TOPIC;
+    std::string OBS_MOCAP_TOPIC;
+    std::string CLIENT_ID;
 
-  const char* LWT_PAYLOAD = "Last will and testament.";
-  const int  QOS = 1;
+    const char* LWT_PAYLOAD = "Last will and testament.";
+    const int  QOS = 1;
 
-  const std::chrono::seconds TIMEOUT = std::chrono::seconds(10);
+    const std::chrono::seconds TIMEOUT = std::chrono::seconds(10);
 
-  bool isStreamingMocap = false;
-  void streamMocapData();
+    bool isStreamingMocap = false;
+    void streamMocapData();
 
-  bool isStreamingObservations = false;
-  void streamObservations();
+    bool isStreamingObservations = false;
+    void streamObservations();
 
 };
 
