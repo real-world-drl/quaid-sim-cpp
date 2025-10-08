@@ -12,6 +12,8 @@ class MqttSettings {
 public:
     MqttSettings(const std::string &path);
 
+    void setModelFile(const std::string &path);
+
 
     std::string mqtt_queue_no = "10";
     std::string mqtt_server_ip = "192.168.86.202";
@@ -23,6 +25,8 @@ public:
 
     int matching_servo_limits = 45;
     int version = 2;
+
+    std::string model_file = "../assets/quaid_v2.xml";
 
 protected:
     void parse(const std::string &path);

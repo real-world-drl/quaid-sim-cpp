@@ -10,17 +10,28 @@
 #include <mujoco/mujoco.h>
 #include "mqtt_controller.h"
 
-namespace QuaidController {
-  void setup_camera(mjvCamera &cam);
+class QuaidController {
+protected:
+    std::shared_ptr<MqttController> mqtt;
+    std::shared_ptr<MqttSettings> settings;;
 
-  void init_controller(mjModel* m, mjData* d, mjvCamera *cam, std::shared_ptr<MqttSettings> settings, const std::string& mqtt_queue_no);
+public:
+    QuaidController(mjModel* m, mjData* d, std::shared_ptr<MqttSettings> settings, mjvCamera *cam, const std::string& mqtt_queue_no);
+    ~QuaidController();
 
-  void controller(const mjModel *m, mjData *d);
+    void setup_camera(mjvCamera &cam);
 
-  extern MqttController mqtt;
+//    void init_controller(mjModel* m, mjData* d, mjvCamera *cam, std::shared_ptr<MqttSettings> settings, const std::string& mqtt_queue_no);
+//    void controller(const mjModel *m, mjData *d);
 
-  void disconnect();
 
-}
+    void disconnect();
+
+    bool isResetting();
+    void finishResetting();
+
+    void initModel();
+
+};
 
 #endif //QUAID_SIM_CPP_QUAID_CONTROLLER_H

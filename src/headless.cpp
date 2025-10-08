@@ -32,22 +32,16 @@ int main(int argc, const char** argv) {
 
     CLI11_PARSE(app, argc, argv);
 
-    std::shared_ptr <MqttSettings> settings = std::make_shared<MqttSettings>(config_file);
-
-    if (model_file.empty()) {
-        if (settings->version == 1) {
-            model_file = "../assets/quaid.xml";
-        } else {
-            model_file = "../assets/v2/quaid_v2.xml";
-        }
-    }
+    std::shared_ptr<MqttSettings> settings = std::make_shared<MqttSettings>(config_file);
+    settings->setModelFile(model_file);
 
     // load and compile model
+    std::cout << "Loading model: " << settings->model_file << std::endl;
     char error[1000] = "Could not load binary model";
-    if (model_file.find(".mjb") != std::string::npos) {
-        m = mj_loadModel(model_file.c_str(), 0);
+    if (settings->model_file.find(".mjb") != std::string::npos) {
+        m = mj_loadModel(settings->model_file.c_str(), 0);
     } else {
-        m = mj_loadXML(model_file.c_str(), 0, error, 1000);
+        m = mj_loadXML(settings->model_file.c_str(), 0, error, 1000);
     }
     if (!m) {
         mju_error_s("Load model error: %s", error);
@@ -56,7 +50,7 @@ int main(int argc, const char** argv) {
     // make data
     d = mj_makeData(m);
 
-    QuaidController::init_controller(m, d, &cam, settings, mqtt_queue_no);
+    std::shared_ptr<QuaidController> controller = std::make_shared<QuaidController>(m, d, settings, &cam, mqtt_queue_no);
 
     while (true) {
         mjtNum simstart = d->time;
@@ -72,7 +66,9 @@ int main(int argc, const char** argv) {
     mj_deleteData(d);
     mj_deleteModel(m);
 
-    QuaidController::disconnect();
-
     return 1;
+}
+
+void run_simulation() {
+
 }
