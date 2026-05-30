@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include/)
 # requires MUJOCO_PATH to be set
+if(NOT DEFINED ENV{MUJOCO_PATH})
+    message(FATAL_ERROR "MUJOCO_PATH environment variable must be set to your MuJoCo install")
+endif()
 include_directories($ENV{MUJOCO_PATH}/include/)
 link_directories($ENV{MUJOCO_PATH}/lib/)
 
