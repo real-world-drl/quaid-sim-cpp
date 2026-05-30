@@ -6,12 +6,13 @@ SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -g")
 set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include/)
-include_directories(~/install/mujoco/mujoco-3.3.5/include/)
-link_directories(~/install/mujoco/mujoco-3.3.5/lib/)
+# requires MUJOCO_PATH to be set
+include_directories($ENV{MUJOCO_PATH}/include/)
+link_directories($ENV{MUJOCO_PATH}/lib/)
 
 find_package(yaml-cpp REQUIRED)
 
-find_package(glfw3 REQUIRED)
+find_package(glfw3)
 find_package(PahoMqttCpp REQUIRED)
 
 add_executable(quaid_sim_cpp src/main.cpp include/quaid_controller.h src/quaid_controller.cpp include/mqtt_controller.h src/mqtt_controller.cpp include/servo_shield.h src/servo_shield.cpp include/utils.h src/utils.cpp include/settings.h src/settings.cpp)

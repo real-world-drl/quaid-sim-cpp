@@ -1,4 +1,4 @@
-# Quaid-SIM
+ # Quaid-SIM
 
 A simulated environment constructed using the MuJoCo physics engine. This simulation operates in real-time, mirroring the same MQTT message broker interface used by the actual robot. 
 This ensures that the simulation incorporates the same kind of network communication, including associated delays. Additionally, the simulated controller can operate on the same MCU that the physical robot utilizes, subjecting the simulation to identical computational constraints. 
