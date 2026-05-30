@@ -9,7 +9,9 @@ This also facilitates a more realistic evaluation of the quantization experiment
 ### Building
 Install prereqs:
 
-    sudo apt install libyaml-cpp-dev libglfw3-dev libssl-dev
+    sudo apt install build-essential cmake libyaml-cpp-dev libglfw3-dev libssl-dev
+
+Requires CMake >= 3.25. On older distros (e.g. Ubuntu 22.04, which ships 3.22) install a newer cmake from the [Kitware APT repo](https://apt.kitware.com/) or via `pip install cmake`.
 
 Download MuJoCo binaries from [here](https://github.com/deepmind/mujoco/releases) (tested with versions up to 3.3.5), untar and update the location in the [CMakeLists.txt](CMakeLists.txt).
 
