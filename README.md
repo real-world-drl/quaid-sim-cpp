@@ -22,6 +22,8 @@ To build:
     cmake ..
     make -j8
 
+This builds two executables: `quaid_sim_cpp` (with GUI/visualization) and `quaid_sim_headless` (no GUI — see [Headless Mode](#headless-mode) below). The headless target does not link GLFW, so it can be built and run on machines without a display.
+
 You will need MQTT server up and running before starting the sim.
 
 ### MQTT Server
@@ -88,6 +90,18 @@ There are 3 commandline args:
 - `-m,--model`: the robot definition file. Defaults to `assets/quaid.xml`
 - `-c,--config`: the config file described above. Defaults to `config/settings.yaml`
 - `-q,--mqtt_queue_no`: the queue no that will be appended to the end of the mqtt topics. Defaults to the one set in the settings file above.
+
+### Headless Mode
+The `quaid_sim_headless` executable runs the simulation without any GUI or rendering. Use it when:
+
+- **Running on HPC / headless servers**: it does not require a display, GLFW, or OpenGL, so it runs on cluster nodes where no GUI is installed.
+- **You need consistent, reproducible results**: the GUI build advances the simulation inside a 60 fps render loop, so its timing is affected by rendering speed and windowing quirks. The headless build is decoupled from rendering and therefore produces more consistent behaviour for training and inference.
+
+It accepts the same command line arguments as `quaid_sim_cpp` and exposes the **identical MQTT interface** (see below), so training/inference code does not need to change. From the build dir:
+
+    ./quaid_sim_headless
+
+The only behavioural difference is that there is no window: the interactive Backspace reset is unavailable, so reset the simulation by sending the `s` command on the action topic instead (see [MQTT Interface](#mqtt-interface)).
 
 ### MQTT Interface
 The robot is controlled entirely through the MQTT interface. This closely mimics the real-world robot.
